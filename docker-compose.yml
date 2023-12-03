@@ -1,0 +1,79 @@
+version: "3.9"
+services: 
+
+# Backend
+  backend:
+    build: ./backend
+    ports: 
+      - 8000:8000
+    networks:
+      system-network:
+        #bind to apache proxy pass
+        ipv4_address: "10.88.0.11"
+        
+  # Frontend
+  frontend:
+    build: ./frontend
+    ports: 
+      - 8080:80
+    networks:
+      system-network:
+        ipv4_address: "10.88.0.21"
+  
+  # Weather Service
+  weather:
+    build: ./weather-service
+    ports: 
+      - 8081:8081
+    networks:
+      system-network:
+        #bind to apache proxy pass
+        ipv4_address: "10.88.0.31"
+
+# Door Service
+  door:
+    build: ./door-service
+    ports: 
+      - 8082:8082
+    networks:
+      system-network:
+        #bind to apache proxy pass
+        ipv4_address: "10.88.0.41"
+
+# Heatpump Service
+  heatpump:
+    build: ./heatpump-service
+    ports: 
+      - 8083:8083
+    networks:
+      system-network:
+        #bind to apache proxy pass
+        ipv4_address: "10.88.0.51"
+
+# Window Service
+  window:
+    build: ./window-service
+    ports: 
+      - 8085:8085
+    networks:
+      system-network:
+        #bind to apache proxy pass
+        ipv4_address: "10.88.0.71"
+
+# Actuator Service
+  actuator:
+    build: ./actuator
+    ports: 
+      - 8084:8084
+    networks:
+      system-network:
+        #bind to apache proxy pass
+        ipv4_address: "10.88.0.61"
+
+networks:
+  system-network:    
+      name: system-network
+      driver: bridge
+      ipam:
+        config:
+          - subnet: "10.88.0.0/16"
