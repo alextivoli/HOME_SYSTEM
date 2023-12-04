@@ -346,30 +346,11 @@ export function routes(app, wss, oidc, config) {
     }
   });
 
-  app.put("/window/temperature", authenticate, async (req, resp) => {
-    try {
-      const response = await fetch(
-        `http://actuator:8084/heatpump/temperature/`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(req.body),
-        }
-      );
-      const result = await response;
-      return result;
-    } catch (error) {
-      console.error("Error:", error);
-      return { error: "Something went wrong" };
-    }
-  });
-
   app.put("/window/:id", authenticate, async (req, resp) => {
     try {
+      const id = req.params.id;
       const response = await fetch(
-        `http://actuator:8084/window/:id`,
+        `http://actuator:8084/window/${encodeURIComponent(id)}`,
         {
           method: "PUT",
           headers: {

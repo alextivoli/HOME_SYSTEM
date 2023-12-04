@@ -200,4 +200,26 @@ export function routes(app, config) {
       return { error: "Something went wrong" };
     }
   });
+
+  app.put("/window/:id", async (req, resp) => {
+    try {
+      const id = req.params.id;
+      const response = await fetch(
+        `http://window:8085/window/${encodeURIComponent(id)}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(req.body),
+        }
+      );
+      const result = await response;
+      return result;
+    } catch (error) {
+      console.error("Error:", error);
+      return { error: "Something went wrong" };
+    }
+  });
+
 }

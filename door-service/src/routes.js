@@ -80,7 +80,7 @@ export function routes(app, config) {
     console.info(" Connected to backend");
     try {
       ws.send(
-        JSON.stringify({ type: "subscribe", source: "door", value: door })
+        JSON.stringify({ type: "start", source: "door", value: door })
       );
 
       if (handler === null) {

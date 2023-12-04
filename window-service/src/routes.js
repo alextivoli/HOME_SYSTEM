@@ -117,9 +117,10 @@ export function routes(app, config) {
 
   app.put('/window/:id', (req, resp) => {
     if(!handler.death){
-      const {state} = req.body;
+      const state = req.body;
       const id = req.params.id;
-      windows.find(element => element.windowId === id).state = state;
+      console.log("STATE: ", state, " ID: ", id);
+      windows.find(element => element.windowId === id)[0].state = state;
       handler._sendState();
       resp.status(201);
       resp.json({result: {id: id, state: state}});
