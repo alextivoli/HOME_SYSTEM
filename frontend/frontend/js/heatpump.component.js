@@ -10,7 +10,7 @@
   class HeatpumpComponent extends EventEmitter {
     
     #model;
-    #element;
+    element;
     #handlers = [];
     #edit = null;
     #client = null;
@@ -31,7 +31,7 @@
      */
     destroy() {
       this.#handlers.forEach(h => h.unregister());
-      this.#element.remove();
+      this.element.remove();
     }
 
     /**
@@ -47,15 +47,18 @@
         console.error('Something went wrong getting doors information', e);
       }
 
-        this.#element = document.createElement("div");
-        this.#element.className = "temp";
-        this.#element.id = "temp";
-        this.#element.innerHTML = document.querySelector('script#heatpump-control-template').textContent;
+        this.element = document.createElement("div");
+        this.element.className = "temp";
+        this.element.id = "temp";
+        this.element.innerHTML = document.querySelector('script#heatpump-control-template').textContent;
+
+        const textStateWindow = this.element.querySelector("#text-state-heatpump");
+        textStateWindow.innerHTML = `Heatpump State: ${"ON"}`;
       
 
-        const onBtn = this.#element.querySelector("#buttonOn");
-        const offBtn = this.#element.querySelector("#buttonOff");
-        const setTempBtn = this.#element.querySelector("#buttonSetTemperature");
+        const onBtn = this.element.querySelector("#buttonOn");
+        const offBtn = this.element.querySelector("#buttonOff");
+        const setTempBtn = this.element.querySelector("#buttonSetTemperature");
 
         let hdlrOn = new Handler('click', onBtn, () => this.turnOn());
         this.#handlers.push(hdlrOn);
@@ -64,28 +67,13 @@
         let hdlrSetTemp = new Handler('click', setTempBtn, () => this.updateTemperature());
         this.#handlers.push(hdlrSetTemp);
 
-        return this.#element;
-    }
-
-    async save() {
-      if (this.#edit) {
-        const newDesc = (this.#edit.querySelector('input').value || '').trim();
-        if (newDesc) {
-          try {
-            console.debug(`Attempting to update heatpump ${this.#model.id} with '${newDesc}'...`);
-            await this.#model.update(newDesc);
-          } catch (e) {
-            console.log(`Cannot update heatpump ${this.#model.id}`);
-          }
-        }
-        this._update();
-        this._hideEditField();
-      }
+        return this.element;
     }
 
     async turnOn(){
-      console.debug("Attempting to ON the heatpump");
       try {
+        const textStateWindow = this.element.querySelector("#text-state-heatpump");
+        textStateWindow.innerHTML = `Heatpump State: ${"ON"}`;
         await this.model.update("ON");
       } catch (e) {
         console.log(e.status);
@@ -102,8 +90,9 @@
     }
 
     async turnOff(){
-      console.debug("Attempting to ON the heatpump");
       try {
+        const textStateWindow = this.element.querySelector("#text-state-heatpump");
+        textStateWindow.innerHTML = `Heatpump State: ${"OFF"}`;
         await this.model.update("OFF");
       } catch (e) {
         console.log(e.status);
@@ -121,7 +110,7 @@
 
     async updateTemperature(){
       console.debug("Attempting to change ttemperature of heatpump");
-      let newTemp = this.#element.querySelector("#tempOp").value;
+      let newTemp = this.element.querySelector("#tempOp").value;
       try {
         await this.model.updateTemp(newTemp);
       } catch (e) {

@@ -215,6 +215,7 @@ export function routes(app, config) {
         }
       );
       const result = await response;
+      resp.json(true);
       return result;
     } catch (error) {
       console.error("Error:", error);

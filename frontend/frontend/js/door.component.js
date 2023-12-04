@@ -37,6 +37,9 @@
       this.element.id = "temp";
       this.element.innerHTML = document.querySelector('script#doors-control-template').textContent;
 
+      const textStateWindow = this.element.querySelector("#text-state-door");
+      textStateWindow.innerHTML = `Door State: ${"CLOSED"}`;
+
       const openBtn = this.element.querySelector("#btnOn");
       const closeBtn = this.element.querySelector("#btnOff");
       
@@ -49,8 +52,9 @@
     }
 
     async open() {
-      console.debug("Attempting to open the door");
       try {
+        const textStateWindow = this.element.querySelector("#text-state-door");
+        textStateWindow.innerHTML = `Door State: ${"OPEN"}`;
         await this.model.update("OPEN");
       } catch (e) {
         console.log(e.status);
@@ -67,8 +71,9 @@
     }
 
     async close() {
-      console.debug("Attempting to close the door");
       try {
+        const textStateWindow = this.element.querySelector("#text-state-door");
+        textStateWindow.innerHTML = `Door State: ${"CLOSED"}`;
         await this.model.update("CLOSED");
       } catch (e) {
         const section = document.querySelector("section");

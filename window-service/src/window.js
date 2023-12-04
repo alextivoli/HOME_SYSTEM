@@ -6,5 +6,5 @@ export class Window {
   
     get windowId() { return this._windowId; }
     get state() { return this._state; }
-    set state(state) { this._state = state; }
+    set setState(state) { this._state = state; }
   }

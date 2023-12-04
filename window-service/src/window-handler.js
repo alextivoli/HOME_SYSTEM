@@ -114,10 +114,10 @@ export class WindowHandler extends EventEmitter {
   }
 
   _sendState(){
-    const states = getStateOfwindows();
-    const msg = {type: 'windows', dateTime: DateTime.now().toISO(), states};
+    const value = getStateOfwindows();
+    const msg = {type: 'windows', dateTime: DateTime.now().toISO(), value};
 
-    // message is always appended to the buffer
+    
     this.#buffer.push(msg);
 
     if(!this.#death){

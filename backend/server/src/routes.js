@@ -215,34 +215,27 @@ export function routes(app, wss, oidc, config) {
             break;
 
           case "windows":
-            // RICEZIONE NUOVA WINDOWS DA SERVICE
+            // RICEZIONE WINDOWS DA SERVICE
             resultDate = retrieveDate(data.dateTime);
 
-            console.log("data  -------------------------------- : ", data.states);
+            console.log("data  -------------------------------- : ", data.value);
 
             if(windows == []){
-              windows.push(new Window(data.states[0].windowId, data.states[0].state));
+              windows.push(new Window(data.value[0].windowId, data.value[0].state));
             }else{
-              if(windows.find( element => element.id == data.states[windows.length].windowId) > 0){
-                console.info(
-                  "WINDOWS :: windows alredy created  by microservice "
-                );
+              if(windows.find( element => element.id == data.value[0].windowId) > 0){
+                windows.find( element => element.id == data.value[0].windowId).state = state;
               }else{
-                windows.push(new Window(data.states[windows.length].windowId, data.states[windows.length].state));
+                windows.push(new Window(data.value[0].windowId, data.value[0].state));
               }
             }
-
-            console.info(
-              "WINDOWS :: New windows has been created by windows microservice: "
-            );
 
             for (let [sensor, ws ] of clients) {
               if (sensor == "client") {
-                ws.send(JSON.stringify({ type: "windows", value: indows.find( element => element.id == data.states.windowId)[0] }));
+                ws.send(JSON.stringify({ type: "windows", value: windows.find( element => element.id == data.value.windowId)[0] }));
               }
             }
             break;
-
             
         }
       } catch (error) {
@@ -360,6 +353,7 @@ export function routes(app, wss, oidc, config) {
         }
       );
       const result = await response;
+      resp.json(true);
       return result;
     } catch (error) {
       console.error("Error:", error);

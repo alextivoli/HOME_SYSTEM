@@ -99,7 +99,7 @@ export function routes(app, config) {
       registerHandler(ws, handler);
       
     } catch (e) {
-      console.error('💥 Failed to register WS handler, closing connection', e);
+      console.error(' Failed to register WS handler, closing connection', e);
       ws.close();
     }
   });
@@ -119,14 +119,14 @@ export function routes(app, config) {
     if(!handler.death){
       const state = req.body;
       const id = req.params.id;
-      console.log("STATE: ", state, " ID: ", id);
-      windows.find(element => element.windowId === id)[0].state = state;
+      windows.find(element => element.windowId == id)._state = state;
       handler._sendState();
+      console.log("MANDATO ------ MANDATO ");
       resp.status(201);
-      resp.json({result: {id: id, state: state}});
+      resp.json(true);
     }
     else{
-      console.info("❌ Microservice is down");
+      console.info(" Microservice is down");
     }
   });
 
@@ -140,7 +140,7 @@ export function routes(app, config) {
       resp.json({result: {id: newId, state: window.state}});
     }
     else{
-      console.info("❌ Microservice is down");
+      console.info("Microservice is down");
     }
   });
 

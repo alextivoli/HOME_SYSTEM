@@ -50,8 +50,8 @@
       this.handlers.push(hdlrClose);
 
       const textId = this.element.querySelector("#window-info-id");
-      const textStateWindow = this.element.querySelector("#text-state-window");
       textId.innerHTML = `Window ID: ${model.id}`;
+      const textStateWindow = this.element.querySelector("#text-state-window");
       textStateWindow.innerHTML = `Window State: ${model.state}`;
 
       return this.element;
@@ -59,7 +59,9 @@
 
     async open() {
       try{
-        await this.model.update("OPEN");
+        const textStateWindow = this.element.querySelector("#text-state-window");
+        textStateWindow.innerHTML = `Window State: ${"OPEN"}`;
+        this.model.update("OPEN");  
       }catch(e){
         const section = document.querySelector("section");
         const errorMessage = document.querySelector("#error-message");
@@ -75,7 +77,10 @@
 
     async close() {
       try{
-        await this.model.update("CLOSED");
+        const textStateWindow = this.element.querySelector("#text-state-window");
+        textStateWindow.innerHTML = `Window State: ${"CLOSED"}`;
+        this.model.update("CLOSED");
+       
       } catch(e){
         console.log(e.status);
         const section = document.querySelector("section");
