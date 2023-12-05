@@ -77,7 +77,7 @@ function registerHandler(ws, handler) {
 export function routes(app, config) {
   const ws = new WebSocket("ws://backend:8000");
   ws.on("open", () => {
-    console.info(" Connected to backend");
+    console.info("Connected to backend");
     try {
       ws.send(
         JSON.stringify({ type: "start", source: "door", value: door })
@@ -91,7 +91,7 @@ export function routes(app, config) {
 
       registerHandler(ws, handler);
     } catch (e) {
-      console.error("💥 Failed to register WS handler, closing connection", e);
+      console.error(" Failed to register WS handler, closing connection", e);
       ws.close();
     }
   });

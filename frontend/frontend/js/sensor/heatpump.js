@@ -2,19 +2,19 @@
 
 (function (win) {
   class HeatpumpModel {
-    #state;
-    #temp;
+    state;
+    temp;
 
     constructor(state, temp) {
-      this.#state = state;
-      this.#temp = temp;
+      this.state = state;
+      this.temp = temp;
     }
 
-    get state() { return this.#state; }
-    set state(state) { this.#state = state; }
+    get state() { return this.state; }
+    set setState(state) { this.state = state; }
 
-    get temp() { return this.#temp; }
-    set temp(temp) { this.#temp = temp; }
+    get temp() { return this.temp; }
+    set setTemp(temp) { this.temp = temp; }
   }
 
   /**
@@ -22,7 +22,7 @@
    */
   class RestHeatpumpModel extends HeatpumpModel {
     /** @type {RestClient} */
-    #client;
+    client;
 
     /**
      * Instances a new `RestHeatpumpModel`.
@@ -30,25 +30,25 @@
      */
     constructor(state, temp,  client) {
       super(state, temp);
-      this.#client = client;
+      this.client = client;
     }
 
 
     async create() {
       let dto = this.toDto();
-      dto = await this.#client.post('heatpump', dto);
+      dto = await this.client.post('heatpump', dto);
       return this;
     }
 
     async delete() {
-      await this.#client.del(`heatpump`);
+      await this.client.del(`heatpump`);
       return this;
     }
 
     async update(state) {
       console.log("Update heatpump");
       let dto = {state: state};
-      await this.#client.put(`/heatpump/state`, dto);
+      await this.client.put(`/heatpump/state`, dto);
       this.state = state;
       return this;
     }
@@ -56,7 +56,7 @@
     async updateTemp(newTemp) {
       console.log("Update heatpump");
       let dto = {temp: newTemp};
-      await this.#client.put(`/heatpump/temperature`, dto);
+      await this.client.put(`/heatpump/temperature`, dto);
       this.temp = newTemp;
       return this;
     }

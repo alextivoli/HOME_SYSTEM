@@ -1,13 +1,11 @@
 'use strict';
 
 import {HeatpumpHandler} from './heatpump-handler.js';
-import {v4 as uuid} from 'uuid';
 import {WebSocket} from "ws";
-import {sequencer} from './utils.js'
 import {Heatpump} from './heatpump.js'
 
 let handler = null;
-let heatpump = new Heatpump("OFF", 20);
+let heatpump = new Heatpump( 20, "OFF");
 
 export function getStateOfHeatpump(){
   return heatpump.state;
@@ -121,7 +119,7 @@ export function routes(app, config) {
 
   app.put("/heatpump/temperature", async (req, resp) => {
     console.log("REQ: ", req.body);
-    const { temp } = req.body;
+    const  temp  = req.body.temp;
     console.log("HEATPUMP SERVICE CHANGE STATE:  ", temp);
     heatpump._temperature = temp;
     handler._sendTemp();

@@ -71,6 +71,10 @@ async function run() {
   console.debug(`🔧 Initializing routes...`);
   routes(app, options.config);
   fallbacks(app);
+  
+  app.listen(port, iface, () => {
+    console.info(`🏁 Server listening: http://${iface}:${port}`);
+  });
 }
 
 run().then(() => {

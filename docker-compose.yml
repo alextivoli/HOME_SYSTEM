@@ -70,6 +70,16 @@ services:
         #bind to apache proxy pass
         ipv4_address: "10.88.0.61"
 
+        # Actuator Service
+  thermometer:
+    build: ./thermometer-service
+    ports: 
+      - 8086:8086
+    networks:
+      system-network:
+        #bind to apache proxy pass
+        ipv4_address: "10.88.0.81"
+
 networks:
   system-network:    
       name: system-network

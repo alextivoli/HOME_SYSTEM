@@ -88,7 +88,7 @@ export function routes(app, wss, oidc, config) {
                 break;
 
               case "door":
-                console.info("DOORS :: Doors microservice connected");
+                console.info("DOOR :: Doors microservice connected");
                 if (door == null) {
                   door = new Door(data.value._state);
                 } else {
@@ -102,9 +102,11 @@ export function routes(app, wss, oidc, config) {
               case "heatpump":
                 console.info("HEATPUMP :: HeatPump microservice connected");
                 if (heatpump == null) {
-                  heatpump = new Heatpump(data.value._state);
+                  console.log("---------- data stamp ---------",data.value);
+                  heatpump = new Heatpump(data.value._temperature,data.value._state);
                 } else {
                   heatpump.state = data.value._state;
+                  heatpump.state = data.value._temperature;
                 }
                 clients.set("heatpump", ws);
 
@@ -138,6 +140,12 @@ export function routes(app, wss, oidc, config) {
               time: resultDate.time,
               temp: temp,
             });
+
+            for (let [sensor, ws ] of clients) {
+              if (sensor == "client") {
+                ws.send(JSON.stringify({ type: "temperature", value: temperatures }));
+              }
+            }
 
             break;
 
@@ -204,8 +212,6 @@ export function routes(app, wss, oidc, config) {
             } else {
               heatpump.temperature = heatpump_temp;
             }
-
-            services.set("heatpump", heatpump);
 
             for (let [sensor, ws ] of clients) {
               if (sensor == "client") {
@@ -332,6 +338,9 @@ export function routes(app, wss, oidc, config) {
         }
       );
       const result = await response;
+      resp.json({
+        result: true,
+      });
       return result;
     } catch (error) {
       console.error("Error:", error);

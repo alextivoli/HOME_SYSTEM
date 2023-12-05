@@ -86,7 +86,7 @@ export function routes(app, config) {
       ws.send(JSON.stringify({"type": "start", "source": "thermometer"}));
 
       if(handler === null){
-        handler = new ThermometerHandler(ws, config, `thermometer:${uuid()}`);
+        handler = new ThermometerHandler(ws, config, `thermometer`);
       }
       else{
         handler.ws = ws;
@@ -95,7 +95,7 @@ export function routes(app, config) {
       registerHandler(ws, handler);
       
     } catch (e) {
-      console.error('💥 Failed to register WS handler, closing connection', e);
+      console.error('Failed to register WS handler, closing connection', e);
       ws.close();
     }
   });

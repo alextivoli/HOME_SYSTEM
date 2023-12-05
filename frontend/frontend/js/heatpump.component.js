@@ -9,12 +9,11 @@
 
   class HeatpumpComponent extends EventEmitter {
     
-    #model;
+    model;
     element;
-    #handlers = [];
-    #edit = null;
-    #client = null;
-    #wsclient = null;
+    handlers = [];
+    client = null;
+    wsclient = null;
 
     /**
      * Instances a new `HeatpumpComponent` component.
@@ -22,16 +21,8 @@
      */
     constructor(client, wsclient) {
       super();
-      this.#client = client;
-      this.#wsclient = wsclient;
-    }
-
-    /**
-     * Destroys this component, removing it from it's parent node.
-     */
-    destroy() {
-      this.#handlers.forEach(h => h.unregister());
-      this.element.remove();
+      this.client = client;
+      this.wsclient = wsclient;
     }
 
     /**
@@ -40,11 +31,12 @@
      */
     async init() {
       try {
-        const resp = await this.#client.get(`heatpump`);
+        const resp = await this.client.get(`heatpump`);
         const heatpump = resp.result;
-        this.model = new RestHeatpumpModel(heatpump._state, heatpump._temperature, this.#client);
+        console.log(heatpump);
+        this.model = new RestHeatpumpModel(heatpump._state, heatpump._temperature, this.client);
       } catch (e) {
-        console.error('Something went wrong getting doors information', e);
+        console.error('Something went wrong getting heatpumps information', e);
       }
 
         this.element = document.createElement("div");
@@ -53,7 +45,11 @@
         this.element.innerHTML = document.querySelector('script#heatpump-control-template').textContent;
 
         const textStateWindow = this.element.querySelector("#text-state-heatpump");
-        textStateWindow.innerHTML = `Heatpump State: ${"ON"}`;
+        console.log(this.model);
+        textStateWindow.innerHTML = `Heatpump State: ${this.model.state}`;
+
+        const textTempWindow = this.element.querySelector("#text-temp-heatpump");
+        textTempWindow.innerHTML = `Heatpump Temperature: ${this.model.temp}`;
       
 
         const onBtn = this.element.querySelector("#buttonOn");
@@ -61,11 +57,11 @@
         const setTempBtn = this.element.querySelector("#buttonSetTemperature");
 
         let hdlrOn = new Handler('click', onBtn, () => this.turnOn());
-        this.#handlers.push(hdlrOn);
+        this.handlers.push(hdlrOn);
         let hdlrOff = new Handler('click', offBtn, () => this.turnOff());
-        this.#handlers.push(hdlrOff);
+        this.handlers.push(hdlrOff);
         let hdlrSetTemp = new Handler('click', setTempBtn, () => this.updateTemperature());
-        this.#handlers.push(hdlrSetTemp);
+        this.handlers.push(hdlrSetTemp);
 
         return this.element;
     }
@@ -113,6 +109,8 @@
       let newTemp = this.element.querySelector("#tempOp").value;
       try {
         await this.model.updateTemp(newTemp);
+        const textTempWindow = this.element.querySelector("#text-temp-heatpump");
+        textTempWindow.innerHTML = `Heatpump Temperature: ${this.model.temp}`;
       } catch (e) {
         console.log(e.status);
         const section = document.querySelector("section");

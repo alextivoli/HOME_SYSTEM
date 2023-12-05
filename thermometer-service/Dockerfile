@@ -6,4 +6,4 @@ RUN npm install ws
 RUN npm install wscat
 RUN npm install node-fetch
 CMD ["npm", "start"] 
-EXPOSE 8085
+EXPOSE 8086

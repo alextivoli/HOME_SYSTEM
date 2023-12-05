@@ -83,7 +83,7 @@ export function routes(app, config) {
       registerHandler(ws, handler);
       
     } catch (e) {
-      console.error('💥 Failed to register WS handler, closing connection', e);
+      console.error('Failed to register WS handler, closing connection', e);
       ws.close();
     }
   });

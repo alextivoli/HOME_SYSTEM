@@ -113,13 +113,6 @@ input[type=text]:focus {
   max-width: 90%;
 }
 
-.header {
-}
-
-.header h1 {
-  /*TODO*/
-}
-
 .header img.logo {
   margin-right: 1rem;
 }

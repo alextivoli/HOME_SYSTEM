@@ -152,7 +152,7 @@ export function routes(app, config) {
   });
 
   app.put("/heatpump/temperature", async (req, resp) => {
-    const temperature = req.body.temp;
+    const temperature = req.body;
 
     console.debug("Attempting to change temperature of heatpump with: ", 
       temperature
@@ -170,6 +170,9 @@ export function routes(app, config) {
         }
       );
       const result = await response;
+      resp.json({
+        result: true,
+      });
       return result;
     } catch (error) {
       console.error("Error:", error);

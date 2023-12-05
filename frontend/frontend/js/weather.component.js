@@ -45,9 +45,9 @@
     init() {
         this.#element = document.createElement("div");
         // this.#element.className = "weather";
-        // this.#element.innerHTML = document.querySelector('script#weather-template').textContent;
-        // const root = document.querySelector('#info-sensor');
-        // root.appendChild(this.#element);
+        // this.#element.innerHTML = document.querySelector('script#weather-control-template').textContent;
+        // const textTempWindow = this.element.querySelector("#text-weather");
+        // textTempWindow.innerHTML = `Weather Temperature: ${this.model.temp}`;
         return this.#element;
 
     }

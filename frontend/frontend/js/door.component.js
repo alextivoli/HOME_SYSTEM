@@ -5,16 +5,15 @@
   class DoorComponent extends EventEmitter {
     model;
     element;
-    element2;
-    #client = null;
-    #wsclient = null;
+    client = null;
+    wsclient = null;
     handlers = [];
 
 
     constructor(client, wsclient) {
       super();
-      this.#client = client;
-      this.#wsclient = wsclient;
+      this.client = client;
+      this.wsclient = wsclient;
     }
 
     destroy() {
@@ -25,9 +24,9 @@
     async init() {
 
       try {
-        const resp = await this.#client.get(`door`);
+        const resp = await this.client.get(`door`);
         const door = resp.result;
-        this.model = new RestDoorModel(door._state, this.#client);
+        this.model = new RestDoorModel(door._state, this.client);
       } catch (e) {
         console.error('Something went wrong getting doors information', e);
       }

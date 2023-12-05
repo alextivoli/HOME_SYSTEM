@@ -9,8 +9,8 @@ import {resolve, dirname} from 'path';
 
 const {merge} = lodash;
 
-const IFACE = 'localhost';
-const PORT = 8083;
+const IFACE = 'thermometer';
+const PORT = 8086;
 const ERROR_PROB = 0.1;
 const DELAY_PROB = 0.2;
 const FREQ_MS = 2000;

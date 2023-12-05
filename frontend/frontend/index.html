@@ -75,6 +75,7 @@
                   <div class>
                     <script type="text/html" id="heatpump-control-template">
                       <h4 id="text-state-heatpump"></h4>
+                      <h4 id="text-temp-heatpump"></h4>
                       <div class="div-buttons">
                         <div id="buttonOn" class="customButton">
                           <span class="buttonText">On</span>
@@ -121,7 +122,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-5 control windows" id="control-windows">
+            <div class="col-5 control windows" style="margin-top: 5vh;" id="control-windows">
               <div class="right">
                 <div class="info" id="info-windows">
                   <h2>Windows</h2>
@@ -144,6 +145,22 @@
             </div>
           </div>
         </div>
+
+      <div class="row container " style="display: flex; justify-content: center;">
+        <div class="col-5 control weather" id="control-weather">
+          <div class="right">
+            <div class="info" id="info-weather">
+              <h2>Weather</h2>
+              <div class>
+                <script type="text/html" id="weather-control-template">
+                    <h4 id="text-weather"></h4>
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <script
