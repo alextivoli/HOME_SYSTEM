@@ -3,14 +3,11 @@
 (async function () {
   const client = new RestClient('/api');
   const ws = new WSClient('/ws');
-  const root = document.querySelector('.content #root');
   const rootDoor = document.querySelector('#info-door');
   const rootHeatpump = document.querySelector('#info-pump');
   const rootWindows = document.querySelector('#info-windows');
   const login = document.querySelector('#login-container');
-  /** @type {{init:()=>Promise<HTMLElement>,destroy:()=>void}[]} */
   const components = [];
-  /** @type {{unsubscribe:() => void}|null} */
   let subscription = null;
 
   async function init() {

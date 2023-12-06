@@ -4,6 +4,7 @@ import {DateTime} from 'luxon';
 import {anIntegerWithPrecision} from './random.js';
 import {EventEmitter} from 'events';
 import { getStateOfthermometer } from './routes.js';
+import {calculateTemp} from './utils.js'
 
 class ValidationError extends Error {
   #message;
@@ -28,6 +29,8 @@ export class ThermometerHandler extends EventEmitter {
   #timeout;
   #buffer;
   #death;
+  temperature;
+  service = new Map();;
 
   /**
    * Instances a new weather handler.
@@ -51,6 +54,15 @@ export class ThermometerHandler extends EventEmitter {
     this.#ws = ws;
   }
 
+  get temperature() {
+    return this.temperature;
+  }
+
+  set setTemperature(temp) {
+    this.temperature = temp;
+  }
+
+
   /**
    * Handles incoming messages.
    * @param msg {string} An incoming JSON message
@@ -67,6 +79,37 @@ export class ThermometerHandler extends EventEmitter {
     switch (json.type) {
       case 'subscribe': this._onSubscribe(); break;
       case 'unsubscribe': this._onUnsubscribe(); break;
+      case 'windows' : 
+        this.temperature = calculateTemp(json, this.temperature, this.service);  
+        if(!!this.service.get('windows')){
+          this.service.get('windows') = json.value.state;
+        }else{
+          this.service.set('windows',json.value.state);
+        }
+        break;
+      case 'door' : 
+        this.temperature = calculateTemp(json, this.temperature);  
+        if(!!this.service.get('door')){
+          this.service.get('door') = json.value.state;
+        }else{
+          this.service.set('door',json.value.state);
+        }
+        break;
+      case 'heatpump/state' : 
+        this.temperature = calculateTemp(json, this.temperature);  
+        if(!!this.service.get('heatpump')){
+          this.service.get('heatpump') = json.value.state;
+        }else{
+          this.service.set('heatpump',json.value.state);
+        }
+        break;
+      case 'heatpump/temperature' : 
+        this.temperature = calculateTemp(json, this.temperature);  
+        break;
+      case 'temperature' : 
+        this.temperature = calculateTemp(json, this.temperature);  
+        this._sendTemp(this.temperature);
+        break;
     }
   }
 
@@ -94,11 +137,8 @@ export class ThermometerHandler extends EventEmitter {
       throw new ValidationError('Invalid inbound message');
     }
     const json = JSON.parse(msg);
-    if (json.type !== 'subscribe' && json.type !== 'unsubscribe') {
+    if (json.type !== 'subscribe' && json.type !== 'unsubscribe' && json.type !== 'windows' && json.type !== 'thermometer' && json.type !== 'heatpump/state' && json.type !== 'heatpump/temperature' && json.type !== 'door' && json.type !== 'temperature') {
       throw new ValidationError('Invalid message type');
-    }
-    if (json.target !== 'thermometer') {
-      throw new ValidationError('Invalid subscription target');
     }
 
     return json;
@@ -116,6 +156,28 @@ export class ThermometerHandler extends EventEmitter {
   _sendState(){
     const states = getStateOfthermometer();
     const msg = {type: 'thermometer', dateTime: DateTime.now().toISO(), states};
+
+    // message is always appended to the buffer
+    this.#buffer.push(msg);
+
+    if(!this.#death){
+      // messages are dispatched immediately if delays are disabled or a random number is
+      // generated greater than `delayProb` messages
+      if (!this.#config.delays) {
+        for (const bMsg of this.#buffer) {
+          this._send(bMsg);
+        }
+        this.#buffer = [];
+      } else {
+        console.info(`💤 Due to network delays, ${this.#buffer.length} messages are still queued`, {handler: this.#name});
+      }
+    }  
+  }
+
+
+  _sendTemp(){
+    const temp = temperature();
+    const msg = {type: 'thermometerTemp', dateTime: DateTime.now().toISO(), temp};
 
     // message is always appended to the buffer
     this.#buffer.push(msg);

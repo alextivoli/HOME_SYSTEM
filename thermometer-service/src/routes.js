@@ -79,9 +79,10 @@ function registerHandler(ws, handler) {
  */
 export function routes(app, config) {
 
-  const ws = new WebSocket("ws://localhost:8000");
+  const ws = new WebSocket("ws://backend:8000");
   ws.on("open", () => {
     console.info("Connected to backend");
+
     try {
       ws.send(JSON.stringify({"type": "start", "source": "thermometer"}));
 
@@ -98,7 +99,7 @@ export function routes(app, config) {
       console.error('Failed to register WS handler, closing connection', e);
       ws.close();
     }
-  });
+  })
 
   ws.on("close", () => {
   });
@@ -109,4 +110,5 @@ export function routes(app, config) {
       routes(app, config);
     }, 2000);
   });
+
 }

@@ -98,31 +98,24 @@ export function routes(app, config) {
   });
 
   app.put("/door/state", async (req, resp) => {
-    const { state } = req.body;
-
-    console.debug("Attempting to change state of door with state: ", { state });
-
-    const url = 'http://door:8082/door/state';
-
-    fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(req.body),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+    try {
+      const response = await fetch(
+        `http://door:8082/door/state`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(req.body),
         }
-        return response.json();
-      })
-      .then(responseData => {
-        console.log('PUT request successful:', responseData);
-      })
-      .catch(error => {
-        console.error('Error during PUT request:', error);
-      });
+      );
+      const result = await response;
+      resp.json({result: true});
+      return result;
+    } catch (error) {
+      console.error("Error:", error);
+      return { error: "Something went wrong" };
+    }
   });
 
   app.put("/heatpump/state", async (req, resp) => {
@@ -144,6 +137,7 @@ export function routes(app, config) {
         }
       );
       const result = await response;
+      resp.json({result: true});
       return result;
     } catch (error) {
       console.error("Error:", error);
@@ -170,9 +164,7 @@ export function routes(app, config) {
         }
       );
       const result = await response;
-      resp.json({
-        result: true,
-      });
+      resp.json({result: true});
       return result;
     } catch (error) {
       console.error("Error:", error);

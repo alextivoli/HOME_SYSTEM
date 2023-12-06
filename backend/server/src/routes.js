@@ -135,19 +135,29 @@ export function routes(app, wss, oidc, config) {
                 temp
             );
 
-            temperatures.push({
-              date: resultDate.date,
-              time: resultDate.time,
-              temp: temp,
-            });
+            let obj = {date: resultDate.date, time: resultDate.time, temp: temp,}
+            temperatures.push(obj);
 
             for (let [sensor, ws ] of clients) {
               if (sensor == "client") {
-                ws.send(JSON.stringify({ type: "temperature", value: temperatures }));
+                ws.send(JSON.stringify({ type: "temperature", value: obj }));
+              }
+
+              if (sensor == "thermometer") {
+                ws.send(JSON.stringify({ type: "temperature", value: obj }));
               }
             }
 
             break;
+
+          case "thermometerTemp":
+              temp = data.value;
+              for (let [sensor, ws ] of clients) {
+                if (sensor == "client") {
+                  ws.send(JSON.stringify({ type: "thermometerTemp", value: temp }));
+                }
+              }
+              break;
 
           case "door":
             // RICEZIONE NUOVO STATO DA DOOR SERVICE
@@ -301,6 +311,14 @@ export function routes(app, wss, oidc, config) {
         body: JSON.stringify(req.body),
       });
       const result = await response;
+      resp.json({
+        result: true,
+      });
+      for (let [sensor, ws ] of clients) {
+        if (sensor == "thermometer") {
+          ws.send(JSON.stringify({ type: "door", value: req.body }));
+        }
+      }
       return result;
     } catch (error) {
       console.error("Error:", error);
@@ -318,6 +336,15 @@ export function routes(app, wss, oidc, config) {
         body: JSON.stringify(req.body),
       });
       const result = await response;
+      resp.json({
+        result: true,
+      });
+
+      for (let [sensor, ws ] of clients) {
+        if (sensor == "thermometer") {
+          ws.send(JSON.stringify({ type: "heatpump/state", value: req.body }));
+        }
+      }
       return result;
     } catch (error) {
       console.error("Error:", error);
@@ -341,6 +368,12 @@ export function routes(app, wss, oidc, config) {
       resp.json({
         result: true,
       });
+
+      for (let [sensor, ws ] of clients) {
+        if (sensor == "thermometer") {
+          ws.send(JSON.stringify({ type: "heatpump/temperature", value: req.body }));
+        }
+      }
       return result;
     } catch (error) {
       console.error("Error:", error);
@@ -363,11 +396,20 @@ export function routes(app, wss, oidc, config) {
       );
       const result = await response;
       resp.json(true);
+
+      for (let [sensor, ws ] of clients) {
+        if (sensor == "thermometer") {
+          ws.send(JSON.stringify({ type: "windows", value: req.body }));
+        }
+      }
+
       return result;
     } catch (error) {
       console.error("Error:", error);
       return { error: "Something went wrong" };
     }
+
+    
   });
 
   app.post("/newwindow", authenticate, async (req, resp) => {
