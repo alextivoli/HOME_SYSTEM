@@ -1,9 +1,7 @@
 'use strict';
 
 import {ThermometerHandler} from './thermometer-handler.js';
-import {v4 as uuid} from 'uuid';
 import {WebSocket} from "ws";
-import {Thermometer} from './thermometer.js'
 
 let handler = null;
 let thermometer = null;
@@ -87,7 +85,7 @@ export function routes(app, config) {
       ws.send(JSON.stringify({"type": "start", "source": "thermometer"}));
 
       if(handler === null){
-        handler = new ThermometerHandler(ws, config, `thermometer`);
+        handler = new ThermometerHandler(ws, config, `thermometer`, 20);
       }
       else{
         handler.ws = ws;

@@ -87,7 +87,7 @@ export function routes(app, config) {
   ws.on("open", () => {
     console.info("Connected to backend");
     try {
-      ws.send(JSON.stringify({"type": "start", "source": "window"}));
+      ws.send(JSON.stringify({"type": "start", "source": "window", "value": windows[0]}));
 
       if(handler === null){
         handler = new WindowHandler(ws, config, `window:${uuid()}`);

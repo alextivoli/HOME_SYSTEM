@@ -43,17 +43,6 @@
      */
     init() {
       this.#element = document.createElement("div");
-      // this.#element.className = "thermometer";
-      // this.#element.innerHTML = document.querySelector(
-      //   "script#thermometer-template"
-      // ).textContent;
-
-      // const inp = this.#element.querySelector("input");
-      // inp.id = `thermometer-${this.#model.id}`;
-      // inp.name = inp.id;
-      // const lbl = this.#element.querySelector("label");
-      // lbl.htmlFor = inp.id;
-      // lbl.textContent = this.#model.description;
 
       return this.#element;
     }

@@ -4,6 +4,9 @@ import { Thermometer } from "./sensor/thermometer.js";
 import { Heatpump } from "./sensor/heatpump.js";
 import { Door } from "./sensor/door.js";
 import fetch from "node-fetch";
+import {newId} from "./utils.js"
+
+const id = newId();
 
 function retrieveDate(dateRaw) {
   let completeDate = new Date(dateRaw);
@@ -56,7 +59,8 @@ export function routes(app, wss, oidc, config) {
         const data = JSON.parse(message);
         let temp = null;
         let resultDate = null;
-        console.log("DATA.TYPE: ", data.type);
+
+        console.log("DATA --------------" , data);
         switch (data.type) {
           case "start":
             switch (data.source) {
@@ -79,50 +83,67 @@ export function routes(app, wss, oidc, config) {
               case "window":
                 console.info("WINDOW :: Windows microservice connected");
                 clients.set("windows", ws);
-                if (windows == []) {
-                  windows.push(new Window(data.value._state)) 
+                let obj = new Window(data.value.windowId,data.value.state);
+                if (windows.length == 0) {
+                  windows.push(obj) 
                 } 
                 ws.send(
                   JSON.stringify({ type: "subscribe", target: "windows" })
                 );
+
+                for (let [sensor, ws ] of clients) {    
+                  if (sensor == "thermometer") {
+                    ws.send(JSON.stringify({ type: "window" + data.value.windowId, value: obj }));
+                  }
+                }
                 break;
 
               case "door":
                 console.info("DOOR :: Doors microservice connected");
+                clients.set("door", ws);
                 if (door == null) {
                   door = new Door(data.value._state);
                 } else {
                   door.state = data.value._state;
                 }
-                clients.set("door", ws);
-
+                
                 ws.send(JSON.stringify({ type: "subscribe", target: "door" }));
+
+                for (let [sensor, ws ] of clients) {    
+                  if (sensor == "thermometer") {
+                    ws.send(JSON.stringify({ type: "door", value: door }));
+                  }
+                }
                 break;
 
               case "heatpump":
                 console.info("HEATPUMP :: HeatPump microservice connected");
                 if (heatpump == null) {
-                  console.log("---------- data stamp ---------",data.value);
                   heatpump = new Heatpump(data.value._temperature,data.value._state);
                 } else {
                   heatpump.state = data.value._state;
-                  heatpump.state = data.value._temperature;
+                  heatpump.temperature = data.value._temperature;
                 }
                 clients.set("heatpump", ws);
 
                 ws.send(
                   JSON.stringify({ type: "subscribe", target: "heatpump" })
                 );
+
+                for (let [sensor, ws ] of clients) {    
+                  if (sensor == "thermometer") {
+                    ws.send(JSON.stringify({ type: "heatpump", value: heatpump }));
+                  }
+                }
+    
                 break;
 
               case "thermometer":
                 console.info(
                   "THERMOMETER :: Thermometer microservice connected"
                 );
-                
                 clients.set("thermometer", ws);
 
-               
                 break;
             }
             break;
@@ -151,7 +172,7 @@ export function routes(app, wss, oidc, config) {
             break;
 
           case "thermometerTemp":
-              temp = data.value;
+              temp = data.temp;
               for (let [sensor, ws ] of clients) {
                 if (sensor == "client") {
                   ws.send(JSON.stringify({ type: "thermometerTemp", value: temp }));
@@ -233,9 +254,6 @@ export function routes(app, wss, oidc, config) {
           case "windows":
             // RICEZIONE WINDOWS DA SERVICE
             resultDate = retrieveDate(data.dateTime);
-
-            console.log("data  -------------------------------- : ", data.value);
-
             if(windows == []){
               windows.push(new Window(data.value[0].windowId, data.value[0].state));
             }else{
@@ -342,7 +360,7 @@ export function routes(app, wss, oidc, config) {
 
       for (let [sensor, ws ] of clients) {
         if (sensor == "thermometer") {
-          ws.send(JSON.stringify({ type: "heatpump/state", value: req.body }));
+          ws.send(JSON.stringify({ type: "heatpump", value: req.body }));
         }
       }
       return result;
@@ -371,7 +389,7 @@ export function routes(app, wss, oidc, config) {
 
       for (let [sensor, ws ] of clients) {
         if (sensor == "thermometer") {
-          ws.send(JSON.stringify({ type: "heatpump/temperature", value: req.body }));
+          ws.send(JSON.stringify({ type: "heatpump", value: req.body }));
         }
       }
       return result;
@@ -399,7 +417,7 @@ export function routes(app, wss, oidc, config) {
 
       for (let [sensor, ws ] of clients) {
         if (sensor == "thermometer") {
-          ws.send(JSON.stringify({ type: "windows", value: req.body }));
+          ws.send(JSON.stringify({ type: "windows", value: req.body, valueId: id }));
         }
       }
 
@@ -414,7 +432,6 @@ export function routes(app, wss, oidc, config) {
 
   app.post("/newwindow", authenticate, async (req, resp) => {
     const { state } = req.body;
-    console.log("Attempting to create a new window", { state: state });
     let dto = { state: state };
 
     try {

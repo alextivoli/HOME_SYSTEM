@@ -6,6 +6,7 @@ body, h1, h2, h3, p, button, input {
 
 body {
     font-family: 'Arial', sans-serif;
+    background-color: #726969;
     
 }
 
@@ -86,4 +87,34 @@ body {
     background-color: rgb(185, 70, 41);
 }
 
-/* Add more styles as needed */
+
+
+.info-bar {
+    background-color: #3b3333;
+    color: #000000;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .temperature-panel {
+    display: flex;
+    align-items: center;
+    margin: 5%;
+    height: 10vh;
+    
+  }
+
+  .temperature-label {
+    margin-right: 10px;
+  }
+
+  .temperature-panel:nth-child(1) {
+    background-color: #662a12;
+    width: 40vw;
+  }
+
+  .temperature-panel:nth-child(2) {
+    background-color: #75180e;
+    width: 40vw;
+  }

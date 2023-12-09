@@ -55,7 +55,7 @@
 
     async updateTemp(newTemp) {
       console.log("Update heatpump");
-      let dto = {temp: newTemp};
+      let dto = {temperature: newTemp};
       await this.client.put(`/heatpump/temperature`, dto);
       this.temp = newTemp;
       return this;

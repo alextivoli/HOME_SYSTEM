@@ -8,6 +8,7 @@
     function routes(ws) {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
+            console.log(data);
             dataSubject.next(data);
         };
     }
@@ -34,7 +35,7 @@
 
             this._ws.onclose = () => {
                 if (this._isConnected) {
-                    console.info("⛔️ Connection to the backend closed. Reconnecting...");
+                    console.info(" Connection to the backend closed. Reconnecting...");
                     this._isConnected = false;
 
                     setTimeout(() => {

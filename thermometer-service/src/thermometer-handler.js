@@ -38,12 +38,13 @@ export class ThermometerHandler extends EventEmitter {
    * @param config {{iface:string,port:number,failures:boolean,delays:boolean,frequency:number,timeToLive:number}} Configuration
    * @param name {string} A name for this handler
    */
-  constructor(ws, config, name) {
+  constructor(ws, config, name, temperature) {
     super();
     this.#ws = ws;
     this.#config = config;
     this.#name = name;
     this.#buffer = [];
+    this.temperature = temperature;
   }
 
   get name() {
@@ -68,6 +69,8 @@ export class ThermometerHandler extends EventEmitter {
    * @param msg {string} An incoming JSON message
    */
   onMessage(msg) {
+
+    
     let json;
     try {
       json = this._validateMessage(msg);
@@ -76,41 +79,43 @@ export class ThermometerHandler extends EventEmitter {
       return;
     }
 
+    console.log("\n TEMPERATURE INITIAL --> ", this.temperature);
     switch (json.type) {
-      case 'subscribe': this._onSubscribe(); break;
+      case 'subscribe': 
+      this._onSubscribe(); 
+      break;
       case 'unsubscribe': this._onUnsubscribe(); break;
       case 'windows' : 
         this.temperature = calculateTemp(json, this.temperature, this.service);  
         if(!!this.service.get('windows')){
-          this.service.get('windows') = json.value.state;
+          this.service.set('windows'+json.valueId, json.value.state);
         }else{
-          this.service.set('windows',json.value.state);
+          this.service.set('windows'+json.valueId,json.value.state);
         }
         break;
       case 'door' : 
-        this.temperature = calculateTemp(json, this.temperature);  
+        this.temperature = calculateTemp(json, this.temperature, this.service);  
         if(!!this.service.get('door')){
-          this.service.get('door') = json.value.state;
+          this.service.set('door', json.value.state);
         }else{
-          this.service.set('door',json.value.state);
+          this.service.set('door', json.value.state);
         }
         break;
-      case 'heatpump/state' : 
-        this.temperature = calculateTemp(json, this.temperature);  
+      case 'heatpump' : 
+        this.temperature = calculateTemp(json, this.temperature, this.service);  
         if(!!this.service.get('heatpump')){
-          this.service.get('heatpump') = json.value.state;
+          this.service.set('heatpump',json.value.state);
         }else{
           this.service.set('heatpump',json.value.state);
         }
         break;
-      case 'heatpump/temperature' : 
-        this.temperature = calculateTemp(json, this.temperature);  
-        break;
       case 'temperature' : 
-        this.temperature = calculateTemp(json, this.temperature);  
-        this._sendTemp(this.temperature);
+        this.temperature = calculateTemp(json, this.temperature, this.service);  
         break;
     }
+
+    console.log("TEMPERATURE FINAL --> ", this.temperature);
+    this._sendTemp(this.temperature);
   }
 
   stop() {
@@ -137,7 +142,7 @@ export class ThermometerHandler extends EventEmitter {
       throw new ValidationError('Invalid inbound message');
     }
     const json = JSON.parse(msg);
-    if (json.type !== 'subscribe' && json.type !== 'unsubscribe' && json.type !== 'windows' && json.type !== 'thermometer' && json.type !== 'heatpump/state' && json.type !== 'heatpump/temperature' && json.type !== 'door' && json.type !== 'temperature') {
+    if (json.type !== 'subscribe' && json.type !== 'unsubscribe' && json.type !== 'windows' && json.type !== 'thermometer' && json.type !== 'heatpump' && json.type !== 'door' && json.type !== 'temperature') {
       throw new ValidationError('Invalid message type');
     }
 
@@ -176,8 +181,7 @@ export class ThermometerHandler extends EventEmitter {
 
 
   _sendTemp(){
-    const temp = temperature();
-    const msg = {type: 'thermometerTemp', dateTime: DateTime.now().toISO(), temp};
+    const msg = {type: 'thermometerTemp', dateTime: DateTime.now().toISO(), temp: this.temperature};
 
     // message is always appended to the buffer
     this.#buffer.push(msg);
