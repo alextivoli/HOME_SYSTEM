@@ -60,10 +60,14 @@ export function routes(app, wss, oidc, config) {
         let temp = null;
         let resultDate = null;
 
-        console.log("DATA --------------" , data);
         switch (data.type) {
           case "start":
             switch (data.source) {
+
+              case "client":
+                console.info("FRONTEND :: connected");
+                clients.set("client", ws);
+                break;
 
               case "actuator":
                 console.info("ACTUATOR ::  Actuator microservice connected");
@@ -156,7 +160,7 @@ export function routes(app, wss, oidc, config) {
                 temp
             );
 
-            let obj = {date: resultDate.date, time: resultDate.time, temp: temp,}
+            let obj = {date: resultDate.date, time: resultDate.time, temp: temp}
             temperatures.push(obj);
 
             for (let [sensor, ws ] of clients) {
@@ -175,7 +179,7 @@ export function routes(app, wss, oidc, config) {
               temp = data.temp;
               for (let [sensor, ws ] of clients) {
                 if (sensor == "client") {
-                  ws.send(JSON.stringify({ type: "thermometerTemp", value: temp }));
+                  ws.send(JSON.stringify({ type: "thermometer", value: temp }));
                 }
               }
               break;
@@ -254,7 +258,7 @@ export function routes(app, wss, oidc, config) {
           case "windows":
             // RICEZIONE WINDOWS DA SERVICE
             resultDate = retrieveDate(data.dateTime);
-            if(windows == []){
+            if(windows.length == 0){
               windows.push(new Window(data.value[0].windowId, data.value[0].state));
             }else{
               if(windows.find( element => element.id == data.value[0].windowId) > 0){

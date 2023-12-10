@@ -111,10 +111,10 @@ body {
 
   .temperature-panel:nth-child(1) {
     background-color: #662a12;
-    width: 40vw;
+    width: 30vw;
   }
 
   .temperature-panel:nth-child(2) {
     background-color: #75180e;
-    width: 40vw;
+    width: 30vw;
   }

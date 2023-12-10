@@ -21,20 +21,27 @@
   </head>
   <body>
 
-    <div class="info-bar">
-      <div class="container temperature-panel">
-        <span class="temperature-label">Wheater temperature:</span>
-        <span class="temperature-value">25°C</span>
-      </div>
-      <div class="container temperature-panel">
-        <span class="temperature-label">Room temperature:</span>
-        <span class="temperature-value">18°C</span>
-      </div>
-    </div>
+   
     
     
     <div class="container-main">     
       <div class="row container">
+
+        <div class="info-bar" id="info-bar">
+          <script type="text/html" id="weather-control-template">
+            <div class="container temperature-panel">
+              <h4 id="weather-temperature"></h4>
+            </div>
+          </script>
+          
+          <script type="text/html" id="termomether-control-template">
+            <div class="container temperature-panel">
+              <h4 id="termomether-temperature"></h4>
+            </div>
+          </script>
+        </div>
+
+
           <div class="row top" id="login-container">
             <script type="text/html" id="login-template">
               <div class="profile">
@@ -115,6 +122,8 @@
                 </div>
               </div>
             </div>
+
+            
             <div class="col-5 control door" id="control-door">
               <div class="right">
                 <div class="info" id="info-door">

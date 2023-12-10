@@ -10,6 +10,7 @@ services:
       system-network:
         #bind to apache proxy pass
         ipv4_address: "10.88.0.11"
+    hostname: "backend"
         
   # Frontend
   frontend:

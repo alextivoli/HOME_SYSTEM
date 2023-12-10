@@ -6,35 +6,32 @@
    */
   class ThermometerComponent extends EventEmitter {
     /** @type {RestThermometerModel} */
-    #model;
+    model;
     /** @type {HTMLElement|null} */
-    #element;
+    element;
     /** @type {Handler[]} */
-    #handlers = [];
-    /** @type {HTMLElement|null} */
-    #edit = null;
+    handlers = [];
     /** @type {WSClient[]} */
-    #websocket;
+    wsclient;
 
     /**
      * Instances a new `ThermometerComponent` component.
      * @param model {RestThermometerModel} A thermometer model
      */
-    constructor(model) {
+    constructor(model, wsclient) {
       super();
-      this.#model = model;
-      this.#element = null;
-      this.#handlers = [];
-      this.#edit = null;
-      this.websocket = null;
+      this.model = model;
+      this.element = null;
+      this.handlers = [];
+      this.wsclient = wsclient;
     }
 
     /**
      * Destroys this component, removing it from it's parent node.
      */
     destroy() {
-      this.#handlers.forEach((h) => h.unregister());
-      this.#element.remove();
+      this.handlers.forEach((h) => h.unregister());
+      this.element.remove();
     }
 
     /**
@@ -42,9 +39,23 @@
      * @return {HTMLElement} The root element for this component.
      */
     init() {
-      this.#element = document.createElement("div");
+      this.element = document.createElement("div");
+        this.element.className = "temp";
+        this.element.id = "temp";
+        this.element.innerHTML = document.querySelector('script#termomether-control-template').textContent;
 
-      return this.#element;
+        const textTempWeather= this.element.querySelector("#termomether-temperature");
+
+        const root = document.querySelector('#info-bar');
+        
+        const tempWeather = this.wsclient.getTempTermomether();
+        tempWeather.subscribe((data) => {
+          console.log(data);
+          textTempWeather.innerHTML = `Termomether Temperature: ${data.value}`;
+        });
+
+        root.appendChild(this.element);
+        return this.element;
     }
 
 

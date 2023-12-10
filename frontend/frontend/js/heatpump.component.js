@@ -33,7 +33,6 @@
       try {
         const resp = await this.client.get(`heatpump`);
         const heatpump = resp.result;
-        console.log(heatpump);
         this.model = new RestHeatpumpModel(heatpump._state, heatpump._temperature, this.client);
       } catch (e) {
         console.error('Something went wrong getting heatpumps information', e);
@@ -45,7 +44,6 @@
         this.element.innerHTML = document.querySelector('script#heatpump-control-template').textContent;
 
         const textStateWindow = this.element.querySelector("#text-state-heatpump");
-        console.log(this.model);
         textStateWindow.innerHTML = `Heatpump State: ${this.model.state}`;
 
         const textTempWindow = this.element.querySelector("#text-temp-heatpump");
@@ -105,7 +103,7 @@
     }
 
     async updateTemperature(){
-      console.debug("Attempting to change ttemperature of heatpump");
+      console.debug("Attempting to change temperature of heatpump");
       let newTemp = this.element.querySelector("#tempOp").value;
       try {
         await this.model.updateTemp(newTemp);

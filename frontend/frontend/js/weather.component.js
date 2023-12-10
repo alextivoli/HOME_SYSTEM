@@ -7,15 +7,13 @@
    */
   class WeatherComponent extends EventEmitter {
     /** @type {RestTaskModel} */
-    #model;
+    model;
     /** @type {HTMLElement|null} */
-    #element;
+    element;
     /** @type {Handler[]} */
-    #handlers = [];
-    /** @type {HTMLElement|null} */
-    #edit = null;
+    handlers = [];
     /** @type {WSClient} */
-    #wsclient;
+    wsclient;
 
     /**
      * Instances a new `WeatherComponent` component.
@@ -23,19 +21,18 @@
      */
     constructor(model, wsclient) {
       super();
-      this.#model = model;
-      this.#wsclient = wsclient;
-      this.#element = null;
-      this.#handlers = [];
-      this.#edit = null;
+      this.model = model;
+      this.wsclient = wsclient;
+      this.element = null;
+      this.handlers = [];
     }
 
     /**
      * Destroys this component, removing it from it's parent node.
      */
     destroy() {
-      this.#handlers.forEach(h => h.unregister());
-      this.#element.remove();
+      this.handlers.forEach(h => h.unregister());
+      this.element.remove();
     }
 
     /**
@@ -43,13 +40,22 @@
      * @return {HTMLElement} The root element for this component.
      */
     init() {
-        this.#element = document.createElement("div");
-        // this.#element.className = "weather";
-        // this.#element.innerHTML = document.querySelector('script#weather-control-template').textContent;
-        // const textTempWindow = this.element.querySelector("#text-weather");
-        // textTempWindow.innerHTML = `Weather Temperature: ${this.model.temp}`;
-        return this.#element;
+        this.element = document.createElement("div");
+        this.element.className = "temp";
+        this.element.id = "temp";
+        this.element.innerHTML = document.querySelector('script#weather-control-template').textContent;
 
+        const textTempWeather= this.element.querySelector("#weather-temperature");
+
+        const root = document.querySelector('#info-bar');
+        
+        const tempWeather = this.wsclient.getTempWeather();
+        tempWeather.subscribe((data) => {
+          textTempWeather.innerHTML = `Weather Temperature: ${data.value.temp}`;
+        });
+
+        root.appendChild(this.element);
+        return this.element;
     }
 
   }
