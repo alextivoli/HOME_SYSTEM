@@ -111,18 +111,17 @@ export function routes(app, config) {
     const { state } = req.body;
     console.log("HEATPUMP SERVICE CHANGE STATE:  ", state);
     heatpump._state = state;
-    handler._sendState();
+    handler._sendInfoTemp();
     resp.json({
       result: true,
     });
   });
 
   app.put("/heatpump/temperature", async (req, resp) => {
-    console.log("REQ: ", req.body);
     const  temp  = req.body.temperature;
-    console.log("HEATPUMP SERVICE CHANGE STATE:  ", temp);
+    console.log("HEATPUMP SERVICE CHANGE TEMP:  ", temp);
     heatpump._temperature = temp;
-    handler._sendTemp();
+    handler._sendInfoTemp();
     resp.json({
       result: true,
     });

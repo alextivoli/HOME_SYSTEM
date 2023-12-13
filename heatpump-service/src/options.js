@@ -93,7 +93,7 @@ export function parse() {
     iface: options.iface,
     port: options.port,
     failures: options.failures,
-    delays: options.delays,
+    delays: false,
     frequency: options.frequency,
     delayProb: options.delayProb,
     errorProb: options.errorProb,

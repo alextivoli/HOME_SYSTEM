@@ -114,9 +114,12 @@ export class HeatpumpHandler extends EventEmitter {
     return anIntegerWithPrecision(this.#config.frequency, 0.2);
   }
 
-  _sendState(){
+  _sendInfoTemp(){
     const state = getStateOfHeatpump();
-    const msg = {type: 'heatpump', dateTime: DateTime.now().toISO(), state};
+    const temp = getTempofHeatpump();
+
+    const value = {temp, state};
+    const msg = {type: 'heatpump', dateTime: DateTime.now().toISO(), value};
 
     // message is always appended to the buffer
     this.#buffer.push(msg);
@@ -124,24 +127,6 @@ export class HeatpumpHandler extends EventEmitter {
     if(!this.#death){
       // messages are dispatched immediately if delays are disabled or a random number is
       // generated greater than `delayProb` messages
-      if (!this.#config.delays) {
-        for (const bMsg of this.#buffer) {
-          this._send(bMsg);
-        }
-        this.#buffer = [];
-      } else {
-        console.info(`💤 Due to network delays, ${this.#buffer.length} messages are still queued`, {handler: this.#name});
-      }
-    }  
-  }
-
-  _sendTemp(){
-    const temp = getTempofHeatpump();
-    const msg = {type: 'heatpump', dateTime: DateTime.now().toISO(), temp};
-
-    this.#buffer.push(msg);
-
-    if(!this.#death){
       if (!this.#config.delays) {
         for (const bMsg of this.#buffer) {
           this._send(bMsg);
@@ -175,8 +160,7 @@ export class HeatpumpHandler extends EventEmitter {
       }
     }
     
-    this._sendState();
-    this._sendTemp();
+    this._sendInfoTemp();
 
     console.debug('Subscribing to heatpump state', {handler: this.#name});
     const callback = () => {

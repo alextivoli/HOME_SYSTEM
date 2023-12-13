@@ -9,6 +9,7 @@ export function sequencer() {
 
 export function calculateTemp(msg, temperature, services ){
 
+
   console.log("SENSOR -> ", msg);
     switch(msg.type) {
         case 'windows':
@@ -23,23 +24,29 @@ export function calculateTemp(msg, temperature, services ){
           break;
         case 'door':
           if(!!services){
-            if(services.get('door') == 'OPEN' && msg.value.state != 'OPEN'){
+            console.log(msg.value._state);
+            if(services.get('door') == 'OPEN' && msg.value._state != 'OPEN'){
               temperature = temperature + 1.0;
             }
-            if(services.get('door') == 'CLOSED' && msg.value.state != 'CLOSED'){
+            if(services.get('door') == 'CLOSED' && msg.value._state != 'CLOSED'){
               temperature = temperature - 1.0;
             }
           }
           break;
         case 'heatpump':
           if(services.get('heatpump') == 'ON'){
-            temperature = (temperature + msg.value.temperature) / 2;
+            temperature = (parseInt(temperature, 10) + parseInt(msg.value._temperature, 10)) / 2;
           }
           break;
         case 'temperature':
-          temperature = (temperature + msg.value.temp) / 2;
+          if(services.get('heatpump') == 'OFF' && services.get('door') == 'CLOSED'){
+            temperature = (parseInt(temperature, 10) + parseInt(msg.value.temp, 10)) / 2;
+          }
           break;
       } 
 
+      
       return temperature;
 }
+
+

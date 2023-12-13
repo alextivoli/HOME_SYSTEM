@@ -30,7 +30,8 @@ export class ThermometerHandler extends EventEmitter {
   #buffer;
   #death;
   temperature;
-  service = new Map();;
+  service = new Map();
+  temperatures = [];
 
   /**
    * Instances a new weather handler.
@@ -79,42 +80,49 @@ export class ThermometerHandler extends EventEmitter {
       return;
     }
 
-    console.log("\n TEMPERATURE INITIAL --> ", this.temperature);
     switch (json.type) {
       case 'subscribe': 
-      this._onSubscribe(); 
+        this._onSubscribe(); 
+        
       break;
       case 'unsubscribe': this._onUnsubscribe(); break;
+
       case 'windows' : 
-        this.temperature = calculateTemp(json, this.temperature, this.service);  
-        if(!!this.service.get('windows')){
-          this.service.set('windows'+json.valueId, json.value.state);
-        }else{
-          this.service.set('windows'+json.valueId,json.value.state);
+
+        if(this.service.get('windows'+ json.valueId) == null || this.service.get('windows'+ json.valueId) == undefined){
+          this.service.set('windows'+ json.valueId, 'CLOSED');
         }
+        this.temperature = calculateTemp(json, this.temperature, this.service);  
+        this.service.set('windows'+ json.valueId,json.value.state);
+        
         break;
+
       case 'door' : 
-        this.temperature = calculateTemp(json, this.temperature, this.service);  
-        if(!!this.service.get('door')){
-          this.service.set('door', json.value.state);
-        }else{
-          this.service.set('door', json.value.state);
+        if(this.service.get('door') == null || this.service.get('door') == undefined){
+          this.service.set('door', 'CLOSED');
         }
+        this.temperature = calculateTemp(json, this.temperature, this.service);  
+        
+        this.service.set('door', json.value._state);
+        
         break;
+
       case 'heatpump' : 
-        this.temperature = calculateTemp(json, this.temperature, this.service);  
-        if(!!this.service.get('heatpump')){
-          this.service.set('heatpump',json.value.state);
-        }else{
-          this.service.set('heatpump',json.value.state);
+        if(this.service.get('heatpump') == null || this.service.get('heatpump') == undefined){
+          this.service.set('heatpump','OFF');
         }
+        this.temperature = calculateTemp(json, this.temperature, this.service);  
+        
+        this.service.set('heatpump',json.value._state);
+        
         break;
+
       case 'temperature' : 
         this.temperature = calculateTemp(json, this.temperature, this.service);  
         break;
     }
 
-    console.log("TEMPERATURE FINAL --> ", this.temperature);
+    this.temperatures.push(this.temperature)
     this._sendTemp(this.temperature);
   }
 
@@ -181,6 +189,7 @@ export class ThermometerHandler extends EventEmitter {
 
 
   _sendTemp(){
+
     const msg = {type: 'thermometerTemp', dateTime: DateTime.now().toISO(), temp: this.temperature};
 
     // message is always appended to the buffer

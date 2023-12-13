@@ -204,23 +204,28 @@ export function routes(app, wss, oidc, config) {
               if (sensor == "client") {
                 ws.send(JSON.stringify({ type: "door", value: door }));
               }
+
+              if (sensor == "thermometer") {
+                ws.send(JSON.stringify({ type: "door", value: door }));
+              }
             }
             break;
 
-          case "heatpump-state":
-            // RICEZIONE NUOVO STATO DA HEATPUMP SERVICE
+          case "heatpump":
+            // RICEZIONE NUOVO STATO o TEMPERATURA DA HEATPUMP SERVICE
+
             resultDate = retrieveDate(data.dateTime);
-            const heatpump_state = data.state;
 
             console.info(
               "HEATPUMP :: New state received from the doors microservice: " +
-                heatpump_state
+              data.value.state
             );
 
             if (heatpump == null) {
-              heatpump = new Heatpump(heatpump_state);
+              heatpump = new Heatpump(data.value.temp , data.value.state);
             } else {
-              heatpump.state = heatpump_state;
+              heatpump._temperature =  data.value.temp;
+              heatpump._state = data.value.state;
             }
 
             services.set("heatpump", heatpump);
@@ -229,27 +234,8 @@ export function routes(app, wss, oidc, config) {
               if (sensor == "client") {
                 ws.send(JSON.stringify({ type: "heatpump", value: heatpump }));
               }
-            }
-            break;
 
-          case "heatpump-temp":
-            // RICEZIONE NUOVA TEMPERATURA DA HEATPUMP SERVICE
-            resultDate = retrieveDate(data.dateTime);
-            const heatpump_temp = data.temp;
-
-            console.info(
-              "HEATPUMP :: New temp received from the doors microservice: " +
-                heatpump_temp
-            );
-
-            if (heatpump == null) {
-              heatpump = new Heatpump(heatpump_temp);
-            } else {
-              heatpump.temperature = heatpump_temp;
-            }
-
-            for (let [sensor, ws ] of clients) {
-              if (sensor == "client") {
+              if (sensor == "thermometer") {
                 ws.send(JSON.stringify({ type: "heatpump", value: heatpump }));
               }
             }
@@ -336,11 +322,11 @@ export function routes(app, wss, oidc, config) {
       resp.json({
         result: true,
       });
-      for (let [sensor, ws ] of clients) {
-        if (sensor == "thermometer") {
-          ws.send(JSON.stringify({ type: "door", value: req.body }));
-        }
-      }
+      // for (let [sensor, ws ] of clients) {
+      //   if (sensor == "thermometer") {
+      //     ws.send(JSON.stringify({ type: "door", value: req.body }));
+      //   }
+      // }
       return result;
     } catch (error) {
       console.error("Error:", error);
@@ -362,11 +348,11 @@ export function routes(app, wss, oidc, config) {
         result: true,
       });
 
-      for (let [sensor, ws ] of clients) {
-        if (sensor == "thermometer") {
-          ws.send(JSON.stringify({ type: "heatpump", value: req.body }));
-        }
-      }
+      // for (let [sensor, ws ] of clients) {
+      //   if (sensor == "thermometer") {
+      //     ws.send(JSON.stringify({ type: "heatpump", value: req.body }));
+      //   }
+      // }
       return result;
     } catch (error) {
       console.error("Error:", error);
@@ -391,11 +377,11 @@ export function routes(app, wss, oidc, config) {
         result: true,
       });
 
-      for (let [sensor, ws ] of clients) {
-        if (sensor == "thermometer") {
-          ws.send(JSON.stringify({ type: "heatpump", value: req.body }));
-        }
-      }
+      // for (let [sensor, ws ] of clients) {
+      //   if (sensor == "thermometer") {
+      //     ws.send(JSON.stringify({ type: "heatpump", value: req.body }));
+      //   }
+      // }
       return result;
     } catch (error) {
       console.error("Error:", error);

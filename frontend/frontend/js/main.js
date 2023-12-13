@@ -16,6 +16,18 @@
 
     if (token) {
       await ws.init();
+
+      var controlPanel = document.getElementById("control-panel-template");
+      controlPanel.style.display = "block";
+
+      var containerChart = document.getElementById("container-chart");
+      containerChart.style.display = "block";
+
+      var loginContainer = document.getElementById("login-container");
+      loginContainer.style.display = "none";
+
+
+
       comp_door = new DoorComponent(client, ws);
       comp_heatpump = new HeatpumpComponent(client, ws);
       const modelWeather = new RestWeatherModel(client);
@@ -48,6 +60,10 @@
 
 
     } else {
+      var controlPanel = document.getElementById("control-panel-template");
+      var containerChart = document.getElementById("container-chart");
+      controlPanel.style.display = "none";
+      containerChart.style.display = "none";
       component = new LoginComponent(client);
       subscription = component.on('authenticated', init);
       element = await component.init();

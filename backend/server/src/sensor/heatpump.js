@@ -4,8 +4,8 @@ export class Heatpump {
         this._state = state;
     }
   
-    get temperature() { return this._temperature; }
-    set temperature(temperature) { this._temperature = temperature; }
-    get state() { return this._state; }
-    set state(state) { this._state = state; }
+    get getTemperature() { return this._temperature; }
+    set setTemperature(temperature) { this._temperature = temperature; }
+    get getState() { return this._state; }
+    set setState(state) { this._state = state; }
   }

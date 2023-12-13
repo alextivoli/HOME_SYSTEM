@@ -15,6 +15,7 @@ body {
     justify-content: center;
     align-items: center;
     background-color: #3b3333;
+    min-height: 100vh;
 }
 
 .container {
@@ -34,13 +35,19 @@ body {
 }
 
 .top {
-    background-color: #1a411a;
+    background-color: #2904af;
     color: #fff;
-    padding: 10px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 3vh;
+    border-radius: 10px;
 }
 
 .outline {
     border: 2px solid #fff;
+    margin: 3%;
+    width: 20vw;
 }
 
 .clickable {
@@ -49,6 +56,8 @@ body {
 
 .panelcontrol {
     padding: 20px;
+    display: flex;
+    justify-content: center;
 }
 
 .control {
@@ -95,6 +104,8 @@ body {
     padding: 10px;
     display: flex;
     justify-content: space-between;
+    border-radius: 10px;
+    margin-top: 3vh;
   }
 
   .temperature-panel {
@@ -102,6 +113,7 @@ body {
     align-items: center;
     margin: 5%;
     height: 10vh;
+    justify-content: center;
     
   }
 
@@ -112,9 +124,46 @@ body {
   .temperature-panel:nth-child(1) {
     background-color: #662a12;
     width: 30vw;
+    display: flex;
+    justify-content: center;
   }
 
   .temperature-panel:nth-child(2) {
     background-color: #75180e;
     width: 30vw;
+    display: flex;
+    justify-content: center;
+  }
+
+  .chart-room{
+    display: flex; 
+    justify-content: center; 
+    background-color: #665353;
+  }
+
+
+  .chart-weather{
+    display: flex; 
+    justify-content: center; 
+    background-color: #614141;
+    margin-top: 5vh;
+  }
+
+  .container-chart{
+    width: 100vw;
+    background-color: #3b3333;
+  }
+
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
