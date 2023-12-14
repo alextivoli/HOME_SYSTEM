@@ -40,11 +40,16 @@
     }
 
     async update(state) {
-      console.log("Update Door");
-      let dto = {state: state};
-      await this.#client.put(`door`, dto);
-      this.state = state;
-      return this;
+      if (this.state !== state) {
+        console.log("Update Door");
+        let dto = {state: state};
+        await this.#client.put(`door`, dto);
+        this.state = state;
+        return this;
+      }else {
+        throw new Error("Cannot update door with the same state");
+      }
+      
     }
   }
 

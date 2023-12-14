@@ -26,6 +26,11 @@
       var loginContainer = document.getElementById("login-container");
       loginContainer.style.display = "none";
 
+      const titlePage = document.getElementById("title-page");
+      titlePage.innerHTML = "CONTROL PAGE"
+      const subTitlePage = document.getElementById("sub-title-page");
+      subTitlePage.style.display="none"
+
 
 
       comp_door = new DoorComponent(client, ws);
@@ -64,6 +69,10 @@
       var containerChart = document.getElementById("container-chart");
       controlPanel.style.display = "none";
       containerChart.style.display = "none";
+
+      const titlePage = document.getElementById("title-page");
+      titlePage.innerHTML = "WELCOME"
+      
       component = new LoginComponent(client);
       subscription = component.on('authenticated', init);
       element = await component.init();

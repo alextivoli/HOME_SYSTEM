@@ -51,13 +51,16 @@
     }
 
     async update(state) {
-      console.log("Update Window: ", this.id);
-      let dto = {state: state};
-      await this.#client.put(`window/${encodeURIComponent(this.id)}`, dto);
-      this.state = state;
-      return this;
+      if(this.state !== state){
+        console.log("Update Window: ", this.id);
+        let dto = {state: state};
+        await this.#client.put(`window/${encodeURIComponent(this.id)}`, dto);
+        this.state = state;
+        return this;
+      } else {
+        throw new Error("Cannot update window with the same state");
+      }
     }
-
   }
 
   /* Exporting models */
