@@ -63,15 +63,19 @@
         textStateWindow.innerHTML = `Window State: ${"OPEN ✅"}`;
         this.model.update("OPEN");  
       }catch(e){
-        const section = document.querySelector("section");
         const errorMessage = document.querySelector("#error-message");
+        errorMessage.style.display = "block"
         if(e.status == 408){
           errorMessage.innerHTML = "Request timed out: window service is down.";
+          this.model.update("ERROR");
         }
         else{
           errorMessage.innerHTML = "Window already open or is in error.";
+          
         }
-        section.classList.add("active");
+        setTimeout(function() {
+          errorMessage.style.display = 'none';
+      }, 5000);
       }
     }
 
@@ -83,15 +87,18 @@
        
       } catch(e){
         console.log(e.status);
-        const section = document.querySelector("section");
         const errorMessage = document.querySelector("#error-message");
+        errorMessage.style.display = "block"
         if(e.status == 408){
           errorMessage.innerHTML = "Request timed out: window service is down.";
+          this.model.update("ERROR");
         }
         else{
           errorMessage.innerHTML = "Window already closed or is in error.";
         }
-        section.classList.add("active");
+        setTimeout(function() {
+          errorMessage.style.display = 'none';
+      }, 5000);
       }
     }
 

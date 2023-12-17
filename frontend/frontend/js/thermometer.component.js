@@ -63,7 +63,6 @@
           this.temperatures = resultTemp.result;
         }
 
-        console.log(this.temperatures);
 
         this.chart = this.createChart(this.temperatures);
         
@@ -73,6 +72,7 @@
         await tempTermomether.subscribe((data) => {
           this.spinner.remove();
           var currentMinute = new Date().getHours() * 60 + new Date().getMinutes();
+
           this.temperatures[currentMinute] = data.value;
           textTempThermometer.innerHTML = `Room Temperature: ${data.value} °C`;
           this.chart.update();
@@ -107,7 +107,7 @@
           labels: minutesOfDay, 
           datasets: [
             {
-              label: "1st Line Chart",
+              label: "Registered Temperature",
               data: temperatures,
               borderColor: '#' + pal[3],
               backgroundColor: '#' + pal[3],

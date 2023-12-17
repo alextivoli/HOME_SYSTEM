@@ -49,7 +49,7 @@
      * Initializes the component.
      * @return {HTMLElement} The root element for this component.
      */
-    init() {
+    async init() {
         this.element = document.createElement("div");
         this.element.className = "temp";
         this.element.id = "temp";
@@ -62,9 +62,7 @@
 
         this.spinner = this.element.querySelector("#weather-spinner");
     
-        const resultTemp = this.client.get('temperature');
-
-        console.log(resultTemp);
+        const resultTemp = await this.client.get('temperature');
 
         if(!!resultTemp.result){
           this.temperatures = resultTemp.result;
@@ -97,7 +95,6 @@
 
     createChart(temperatures) {
 
-      console.log("temperatures chart", temperatures);
       var pal = palette('cb-BuGn', 8);
     
       var ctx = document.getElementById("chartWeather").getContext("2d");
@@ -114,7 +111,7 @@
           labels: minutesOfDay, 
           datasets: [
             {
-              label: "1st Line Chart",
+              label: "Registered Temperature",
               data: temperatures,
               borderColor: '#' + pal[3],
               backgroundColor: '#' + pal[3],

@@ -160,7 +160,8 @@ export function routes(app, wss, oidc, config) {
             );
 
             let obj = {date: resultDate.date, time: resultDate.time, temp: temp}
-            var currentMinute = new Date().getHours() * 60 + new Date().getMinutes();
+            var currentMinute = (new Date().getHours()+ 1) * 60  + new Date().getMinutes();
+
             temperatures[currentMinute] = temp;
 
             for (let [sensor, ws ] of clients) {
@@ -178,7 +179,9 @@ export function routes(app, wss, oidc, config) {
           case "thermometerTemp":
             // Handle new temperature data from the thermometer microservice
               temp = data.temp;
-              var currentMinute = new Date().getHours() * 60 + new Date().getMinutes();
+              var currentMinute = (new Date().getHours()+1) * 60 + new Date().getMinutes();
+
+
               temperaturesRoom[currentMinute] = temp;
               for (let [sensor, ws ] of clients) {
                 if (sensor == "client") {
@@ -318,7 +321,6 @@ export function routes(app, wss, oidc, config) {
   });
 
   app.get("/temperature-room", authenticate, (req, resp) => {
-    console.log("-------------------- temo romm " , temperaturesRoom);
     resp.json({
       result: temperaturesRoom,
     });

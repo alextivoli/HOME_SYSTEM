@@ -71,15 +71,19 @@
         await this.model.update("ON");
       } catch (e) {
         console.log(e.status);
-        const section = document.querySelector("section");
         const errorMessage = document.querySelector("#error-message");
+        errorMessage.style.display = "block"
         if (e.status == 408) {
           errorMessage.innerHTML = "Request timed out: heatpump service is down.";
+          this.model.update("ERROR");
         }
         else {
           errorMessage.innerHTML = "Heatpump already open or is in error.";
+         
         }
-        section.classList.add("active");
+        setTimeout(function() {
+          errorMessage.style.display = 'none';
+      }, 5000);
       }
     }
 
@@ -90,15 +94,19 @@
         await this.model.update("OFF");
       } catch (e) {
         console.log(e.status);
-        const section = document.querySelector("section");
         const errorMessage = document.querySelector("#error-message");
+        errorMessage.style.display = "block"
         if (e.status == 408) {
           errorMessage.innerHTML = "Request timed out: heatpump service is down.";
+          this.model.update("ERROR");
         }
         else {
           errorMessage.innerHTML = "Heatpump already open or is in error.";
+          
         }
-        section.classList.add("active");
+        setTimeout(function() {
+          errorMessage.style.display = 'none';
+      }, 5000);
       }
     }
 

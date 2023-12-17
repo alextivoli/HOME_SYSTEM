@@ -31,6 +31,9 @@
       const subTitlePage = document.getElementById("sub-title-page");
       subTitlePage.style.display="none"
 
+      const errorMessage = document.querySelector("#error-message");
+      errorMessage.style.display = "none"
+
 
 
       comp_door = new DoorComponent(client, ws);

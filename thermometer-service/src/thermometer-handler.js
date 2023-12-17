@@ -115,8 +115,6 @@ export class ThermometerHandler extends EventEmitter {
         this.service.set('heatpump',json.value._state);
         this.temperature = calculateTemp(json, this.temperature, this.service);  
         
-        
-        
         break;
 
       case 'temperature' : 

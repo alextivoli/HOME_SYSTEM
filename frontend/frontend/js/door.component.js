@@ -57,15 +57,19 @@
         await this.model.update("OPEN");
       } catch (e) {
         console.log(e.status);
-        const section = document.querySelector("section");
         const errorMessage = document.querySelector("#error-message");
+        errorMessage.style.display = "block"
         if (e.status == 408) {
           errorMessage.innerHTML = "Request timed out: door service is down.";
+          this.model.update("ERROR");
         }
         else {
           errorMessage.innerHTML = "Door already open or is in error.";
+          
         }
-        section.classList.add("active");
+        setTimeout(function() {
+          errorMessage.style.display = 'none';
+      }, 5000);
       }
     }
 
@@ -75,15 +79,19 @@
         textStateWindow.innerHTML = `Door State: ${"CLOSED"}`;
         await this.model.update("CLOSED");
       } catch (e) {
-        const section = document.querySelector("section");
         const errorMessage = document.querySelector("#error-message");
+        errorMessage.style.display = "block"
         if (e.status == 408) {
           errorMessage.innerHTML = "Request timed out: door service is down.";
+          this.model.update("ERROR");
         }
         else {
           errorMessage.innerHTML = "Door already closed or is in error.";
+          
         }
-        section.classList.add("active");
+        setTimeout(function() {
+          errorMessage.style.display = 'none';
+      }, 5000);
       }
     }
   }
