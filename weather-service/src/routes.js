@@ -21,7 +21,7 @@ function registerHandler(ws, handler) {
   };
 
   function pingCb() {
-    console.trace('🏐 Ping-Pong', {handler:handler.name},);
+    console.trace('Ping-Pong', {handler:handler.name},);
     ws.pong();
   }
 
@@ -29,18 +29,18 @@ function registerHandler(ws, handler) {
     try {
       handler.onMessage(msg);
     } catch (e) {
-      console.error('💢 Unexpected error while handling inbound message', {handler:handler.name}, e);
+      console.error('Unexpected error while handling inbound message', {handler:handler.name}, e);
     }
   }
 
   function closeCb() {
-    console.info('⛔ WebSocket closed', {handler:handler.name},);
+    console.info('WebSocket closed', {handler:handler.name},);
     handler.stop();
     removeAllListeners();
   }
 
   function errorCb(err) {
-    console.error('💥 Error occurred', {handler:handler.name}, err);
+    console.error('Error occurred', {handler:handler.name}, err);
     handler.stop();
     removeAllListeners();
     ws.close();

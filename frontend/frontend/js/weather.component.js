@@ -18,12 +18,14 @@
     chart;
     spinner;
 
+    client;
+
 
     /**
      * Instances a new `WeatherComponent` component.
      * @param model {RestDoorModel} A door model
      */
-    constructor(model, wsclient) {
+    constructor(model, client,  wsclient) {
       super();
       this.model = model;
       this.wsclient = wsclient;
@@ -32,6 +34,7 @@
       this.temperatures = [];
       this.chart = null;
       this.spinner = null;
+      this.client = client;
     }
 
     /**
@@ -59,6 +62,13 @@
 
         this.spinner = this.element.querySelector("#weather-spinner");
     
+        const resultTemp = this.client.get('temperature');
+
+        console.log(resultTemp);
+
+        if(!!resultTemp.result){
+          this.temperatures = resultTemp.result;
+        }
 
         this.chart = this.createChart(this.temperatures);
         

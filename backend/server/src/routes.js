@@ -1,22 +1,19 @@
 "use strict";
 import { Window } from "./sensor/window.js";
-import { Thermometer } from "./sensor/thermometer.js";
 import { Heatpump } from "./sensor/heatpump.js";
 import { Door } from "./sensor/door.js";
 import fetch from "node-fetch";
-import {newId} from "./utils.js"
 
-const id = newId();
 
-function retrieveDate(dateRaw) {
-  let completeDate = new Date(dateRaw);
+function convertDate(value) {
+  let completeDate = new Date(value);
 
   let hours = completeDate.getHours();
   let minutes = completeDate.getMinutes();
   let seconds = completeDate.getSeconds();
 
   let year = completeDate.getFullYear();
-  let month = completeDate.getMonth() + 1;
+  let month = completeDate.getMonth();
   let day = completeDate.getDate();
 
   let time = `${hours}:${minutes}:${seconds}`;
@@ -36,6 +33,7 @@ function retrieveDate(dateRaw) {
 
 const windows = [];
 const temperatures = [];
+const temperaturesRoom = [];
 const clients = new Map();
 const services = new Map();
 let door = null;
@@ -153,15 +151,17 @@ export function routes(app, wss, oidc, config) {
             break;
 
           case "temperature":
+             // Handle new temperature data from the weather microservice
             temp = data.value;
-            resultDate = retrieveDate(data.dateTime);
+            resultDate = convertDate(data.dateTime);
             console.info(
               "TEMPERATURE :: New temperature received from the weather microservice: " +
                 temp
             );
 
             let obj = {date: resultDate.date, time: resultDate.time, temp: temp}
-            temperatures.push(obj);
+            var currentMinute = new Date().getHours() * 60 + new Date().getMinutes();
+            temperatures[currentMinute] = temp;
 
             for (let [sensor, ws ] of clients) {
               if (sensor == "client") {
@@ -176,7 +176,10 @@ export function routes(app, wss, oidc, config) {
             break;
 
           case "thermometerTemp":
+            // Handle new temperature data from the thermometer microservice
               temp = data.temp;
+              var currentMinute = new Date().getHours() * 60 + new Date().getMinutes();
+              temperaturesRoom[currentMinute] = temp;
               for (let [sensor, ws ] of clients) {
                 if (sensor == "client") {
                   ws.send(JSON.stringify({ type: "thermometer", value: temp }));
@@ -185,8 +188,8 @@ export function routes(app, wss, oidc, config) {
               break;
 
           case "door":
-            // RICEZIONE NUOVO STATO DA DOOR SERVICE
-            resultDate = retrieveDate(data.dateTime);
+            // Handle new state data from the door microservice
+            resultDate = convertDate(data.dateTime);
             const state = data.state;
 
             console.info(
@@ -212,9 +215,9 @@ export function routes(app, wss, oidc, config) {
             break;
 
           case "heatpump":
-            // RICEZIONE NUOVO STATO o TEMPERATURA DA HEATPUMP SERVICE
+            // Handle new temperature and new state data from the heatpump microservice
 
-            resultDate = retrieveDate(data.dateTime);
+            resultDate = convertDate(data.dateTime);
 
             console.info(
               "HEATPUMP :: New state received from the doors microservice: " +
@@ -242,8 +245,8 @@ export function routes(app, wss, oidc, config) {
             break;
 
           case "windows":
-            // RICEZIONE WINDOWS DA SERVICE
-            resultDate = retrieveDate(data.dateTime);
+            // Handle new state data from the window microservice
+            resultDate = convertDate(data.dateTime);
             if(windows.length == 0){
               windows.push(new Window(data.value[0].windowId, data.value[0].state));
             }else{
@@ -273,13 +276,18 @@ export function routes(app, wss, oidc, config) {
     });
   });
 
+  // Login route
   app.get("/login", (req, resp) => {
     oidc.login(req, resp);
   });
 
+  // Tokens route
   app.get("/tokens", (req, resp) => {
     oidc.tokens(req, resp);
   });
+
+
+   // Routes for fetching sensor data
 
   app.get("/door", authenticate, (req, resp) => {
     const obj = door;
@@ -308,6 +316,21 @@ export function routes(app, wss, oidc, config) {
       result: windows,
     });
   });
+
+  app.get("/temperature-room", authenticate, (req, resp) => {
+    console.log("-------------------- temo romm " , temperaturesRoom);
+    resp.json({
+      result: temperaturesRoom,
+    });
+  });
+
+  app.get("/temperature", authenticate, (req, resp) => {
+    resp.json({
+      result: temperatures,
+    });
+  });
+
+  // Routes for updating sensor states
 
   app.put("/door", authenticate, async (req, resp) => {
     try {
@@ -348,11 +371,6 @@ export function routes(app, wss, oidc, config) {
         result: true,
       });
 
-      // for (let [sensor, ws ] of clients) {
-      //   if (sensor == "thermometer") {
-      //     ws.send(JSON.stringify({ type: "heatpump", value: req.body }));
-      //   }
-      // }
       return result;
     } catch (error) {
       console.error("Error:", error);
@@ -377,11 +395,6 @@ export function routes(app, wss, oidc, config) {
         result: true,
       });
 
-      // for (let [sensor, ws ] of clients) {
-      //   if (sensor == "thermometer") {
-      //     ws.send(JSON.stringify({ type: "heatpump", value: req.body }));
-      //   }
-      // }
       return result;
     } catch (error) {
       console.error("Error:", error);

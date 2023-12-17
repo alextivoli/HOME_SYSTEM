@@ -52,7 +52,7 @@
       const textId = this.element.querySelector("#window-info-id");
       textId.innerHTML = `Window ID: ${model.id}`;
       const textStateWindow = this.element.querySelector("#text-state-window");
-      textStateWindow.innerHTML = `Window State: ${model.state}`;
+      textStateWindow.innerHTML = `Window State: ${model.state} 🔴`;
 
       return this.element;
     }
@@ -60,7 +60,7 @@
     async open() {
       try{
         const textStateWindow = this.element.querySelector("#text-state-window");
-        textStateWindow.innerHTML = `Window State: ${"OPEN"}`;
+        textStateWindow.innerHTML = `Window State: ${"OPEN ✅"}`;
         this.model.update("OPEN");  
       }catch(e){
         const section = document.querySelector("section");
@@ -78,7 +78,7 @@
     async close() {
       try{
         const textStateWindow = this.element.querySelector("#text-state-window");
-        textStateWindow.innerHTML = `Window State: ${"CLOSED"}`;
+        textStateWindow.innerHTML = `Window State: ${"CLOSED 🔴"}`;
         this.model.update("CLOSED");
        
       } catch(e){

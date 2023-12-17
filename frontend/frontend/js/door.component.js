@@ -37,7 +37,7 @@
       this.element.innerHTML = document.querySelector('script#doors-control-template').textContent;
 
       const textStateWindow = this.element.querySelector("#text-state-door");
-      textStateWindow.innerHTML = `Door State: ${"CLOSED"}`;
+      textStateWindow.innerHTML = `Door State: ${this.model.state} 🔴`;
 
       const openBtn = this.element.querySelector("#btnOn");
       const closeBtn = this.element.querySelector("#btnOff");
@@ -53,7 +53,7 @@
     async open() {
       try {
         const textStateWindow = this.element.querySelector("#text-state-door");
-        textStateWindow.innerHTML = `Door State: ${"OPEN"}`;
+        textStateWindow.innerHTML = `Door State: ${"OPEN ✅"}`;
         await this.model.update("OPEN");
       } catch (e) {
         console.log(e.status);

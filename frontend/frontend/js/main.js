@@ -36,7 +36,7 @@
       comp_door = new DoorComponent(client, ws);
       comp_heatpump = new HeatpumpComponent(client, ws);
       const modelWeather = new RestWeatherModel(client);
-      comp_weather = new WeatherComponent(modelWeather, ws);
+      comp_weather = new WeatherComponent(modelWeather, client, ws);
       comp_windows = new WindowsComponent(client, ws);
       comp_termomether = new ThermometerComponent(client, ws);
 

@@ -9,8 +9,6 @@ export function sequencer() {
 
 export function calculateTemp(msg, temperature, services ){
 
-
-  console.log("SENSOR -> ", msg);
     switch(msg.type) {
         case 'windows':
           if(!!services){
@@ -24,7 +22,6 @@ export function calculateTemp(msg, temperature, services ){
           break;
         case 'door':
           if(!!services){
-            console.log(msg.value._state);
             if(services.get('door') == 'OPEN' && msg.value._state != 'OPEN'){
               temperature = temperature + 1.0;
             }

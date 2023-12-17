@@ -44,7 +44,7 @@
         this.element.innerHTML = document.querySelector('script#heatpump-control-template').textContent;
 
         const textStateWindow = this.element.querySelector("#text-state-heatpump");
-        textStateWindow.innerHTML = `Heatpump State: ${this.model.state}`;
+        textStateWindow.innerHTML = `Heatpump State: ${this.model.state} 🔴`;
 
         const textTempWindow = this.element.querySelector("#text-temp-heatpump");
         textTempWindow.innerHTML = `Heatpump Temperature: ${this.model.temp}`;
@@ -67,7 +67,7 @@
     async turnOn(){
       try {
         const textStateWindow = this.element.querySelector("#text-state-heatpump");
-        textStateWindow.innerHTML = `Heatpump State: ${"ON"}`;
+        textStateWindow.innerHTML = `Heatpump State: ${"ON ✅"}`;
         await this.model.update("ON");
       } catch (e) {
         console.log(e.status);
@@ -86,7 +86,7 @@
     async turnOff(){
       try {
         const textStateWindow = this.element.querySelector("#text-state-heatpump");
-        textStateWindow.innerHTML = `Heatpump State: ${"OFF"}`;
+        textStateWindow.innerHTML = `Heatpump State: ${"OFF 🔴"}`;
         await this.model.update("OFF");
       } catch (e) {
         console.log(e.status);

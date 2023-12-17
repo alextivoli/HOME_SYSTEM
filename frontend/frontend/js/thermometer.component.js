@@ -6,7 +6,7 @@
    */
   class ThermometerComponent extends EventEmitter {
     /** @type {RestThermometerModel} */
-    model;
+    client;
     /** @type {HTMLElement|null} */
     element;
     /** @type {Handler[]} */
@@ -20,13 +20,10 @@
 
     spinner;
 
-    /**
-     * Instances a new `ThermometerComponent` component.
-     * @param model {RestThermometerModel} A thermometer model
-     */
-    constructor(model, wsclient) {
+
+    constructor(client, wsclient) {
       super();
-      this.model = model;
+      this.client = client;
       this.element = null;
       this.handlers = [];
       this.wsclient = wsclient;
@@ -60,6 +57,13 @@
 
         this.spinner = this.element.querySelector("#room-spinner");
     
+        const resultTemp = await this.client.get('temperature-room');
+
+        if(!!resultTemp.result){
+          this.temperatures = resultTemp.result;
+        }
+
+        console.log(this.temperatures);
 
         this.chart = this.createChart(this.temperatures);
         
@@ -73,8 +77,6 @@
           textTempThermometer.innerHTML = `Room Temperature: ${data.value} °C`;
           this.chart.update();
         });
-
-
       
         let btnRefreshChart = document.getElementById("btnRefreshChart");
 
@@ -89,7 +91,6 @@
 
     createChart(temperatures) {
 
-      console.log("temperatures chart", temperatures);
       var pal = palette('cb-BuGn', 8);
     
       var ctx = document.getElementById("chartRoom").getContext("2d");
