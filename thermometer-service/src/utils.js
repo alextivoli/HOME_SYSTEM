@@ -40,9 +40,13 @@ export function calculateTemp(msg, temperature, services , lastTemp){
           }
           break;
         case 'temperature':
-          console.log(serviceState(services));
           if(serviceState(services)){
+            if(!!lastTemp){
+              temperature = (parseInt(lastTemp, 10) + parseInt(msg.value.temp, 10)) / 2;
+            }else{
               temperature = (parseInt(temperature, 10) + parseInt(msg.value.temp, 10)) / 2;
+            }
+              
           }
           break;
       } 

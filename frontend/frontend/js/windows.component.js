@@ -37,19 +37,17 @@
 
       try {
         const resp = await this.client.get(`windows`);
-        console.log("RESP RESULT WINDOWS: ", resp.result);
         if(!!resp.result){
+
           resp.result.forEach(async dto => {
-            if(dto._windowId == 1 && dto._state == "CLOSED"){
+            
               const model = new RestWindowModel('1','CLOSED' , this.client);
               model.id = dto._windowId;
               model.state = dto._state;
-              console.log("Window successfully saved", {model: model});
               const root = this.element;
               const component = new WindowComponent(model, this.wsclient);
               const el = component.init(model);
               root.appendChild(el);
-            }
           });
         }
         
@@ -69,22 +67,19 @@
     }
 
     async addWindow() {
-      console.log("NEW WINDOWS");
         const model = new RestWindowModel('0', "CLOSED", this.client);
         try{
           await model.create();
-          console.log("Window successfully saved", {model: model.toDto()});
           this.createWindowComponent(model);
         }catch(e){
-          const section = document.querySelector("section");
           const errorMessage = document.querySelector("#error-message");
+          errorMessage.style.display = "block"
           if(e.status == 408){
             errorMessage.innerHTML = "Request timed out: window service is down.";
           }
           else{
             errorMessage.innerHTML = "Unable to add new window sensor.";
           }
-          section.classList.add("active");
         }
     }
   }

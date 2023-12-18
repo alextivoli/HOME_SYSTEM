@@ -44,10 +44,15 @@
         this.element.innerHTML = document.querySelector('script#heatpump-control-template').textContent;
 
         const textStateWindow = this.element.querySelector("#text-state-heatpump");
-        textStateWindow.innerHTML = `Heatpump State: ${this.model.state} 🔴`;
+       
+        if(this.model.state == "ON"){
+          textStateWindow.innerHTML = `Heatpump State: ${this.model.state} ✅`;
+        }else{
+          textStateWindow.innerHTML = `Heatpump State: ${this.model.state} 🔴`;
+        }
 
         const textTempWindow = this.element.querySelector("#text-temp-heatpump");
-        textTempWindow.innerHTML = `Heatpump Temperature: ${this.model.temp}`;
+        textTempWindow.innerHTML = `Heatpump Temperature: ${this.model.temp} °C`;
       
 
         const onBtn = this.element.querySelector("#buttonOn");

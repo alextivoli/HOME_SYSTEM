@@ -52,7 +52,12 @@
       const textId = this.element.querySelector("#window-info-id");
       textId.innerHTML = `Window ID: ${model.id}`;
       const textStateWindow = this.element.querySelector("#text-state-window");
-      textStateWindow.innerHTML = `Window State: ${model.state} 🔴`;
+
+      if(this.model.state == "OPEN"){
+        textStateWindow.innerHTML = `Window State: ${this.model.state} ✅`;
+      }else{
+        textStateWindow.innerHTML = `Window State: ${this.model.state} 🔴`;
+      }
 
       return this.element;
     }
@@ -61,8 +66,9 @@
       try{
         const textStateWindow = this.element.querySelector("#text-state-window");
         textStateWindow.innerHTML = `Window State: ${"OPEN ✅"}`;
-        this.model.update("OPEN");  
+        await this.model.update("OPEN");  
       }catch(e){
+        console.log(e.status);
         const errorMessage = document.querySelector("#error-message");
         errorMessage.style.display = "block"
         if(e.status == 408){
@@ -83,7 +89,7 @@
       try{
         const textStateWindow = this.element.querySelector("#text-state-window");
         textStateWindow.innerHTML = `Window State: ${"CLOSED 🔴"}`;
-        this.model.update("CLOSED");
+        await this.model.update("CLOSED");
        
       } catch(e){
         console.log(e.status);

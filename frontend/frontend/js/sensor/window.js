@@ -52,7 +52,6 @@
 
     async update(state) {
       if(this.state !== state){
-        console.log("Update Window: ", this.id);
         let dto = {state: state};
         await this.#client.put(`window/${encodeURIComponent(this.id)}`, dto);
         this.state = state;

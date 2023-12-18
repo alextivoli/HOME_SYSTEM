@@ -32,6 +32,7 @@ export class ThermometerHandler extends EventEmitter {
   temperature;
   service = new Map();
   temperatures = [];
+  lastTemp;
 
   /**
    * Instances a new weather handler.
@@ -46,6 +47,7 @@ export class ThermometerHandler extends EventEmitter {
     this.#name = name;
     this.#buffer = [];
     this.temperature = temperature;
+    this.lastTemp = null;
   }
 
   get name() {
@@ -114,14 +116,16 @@ export class ThermometerHandler extends EventEmitter {
 
         this.service.set('heatpump',json.value._state);
         this.temperature = calculateTemp(json, this.temperature, this.service);  
+        this.lastTemp = this.temperature;
         
         break;
 
       case 'temperature' : 
-        this.temperature = calculateTemp(json, this.temperature, this.service);  
+        this.temperature = calculateTemp(json, this.temperature, this.service, this.lastTemp);  
         break;
     }
 
+   
     this.temperatures.push(this.temperature)
     this._sendTemp(this.temperature);
   }

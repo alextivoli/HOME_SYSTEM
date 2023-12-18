@@ -85,7 +85,7 @@ export function routes(app, wss, oidc, config) {
               case "window":
                 console.info("WINDOW :: Windows microservice connected");
                 clients.set("windows", ws);
-                let obj = new Window(data.value.windowId,data.value.state);
+                let obj = new Window(data.value._windowId,data.value._state);
                 if (windows.length == 0) {
                   windows.push(obj) 
                 } 
@@ -253,8 +253,8 @@ export function routes(app, wss, oidc, config) {
             if(windows.length == 0){
               windows.push(new Window(data.value[0].windowId, data.value[0].state));
             }else{
-              if(windows.find( element => element.id == data.value[0].windowId) > 0){
-                windows.find( element => element.id == data.value[0].windowId).state = state;
+              if(windows[data.value[0].windowId - 1] != undefined){
+                windows[data.value[0].windowId - 1]._state = data.value[0].state;
               }else{
                 windows.push(new Window(data.value[0].windowId, data.value[0].state));
               }
@@ -335,6 +335,7 @@ export function routes(app, wss, oidc, config) {
   // Routes for updating sensor states
 
   app.put("/door", authenticate, async (req, resp) => {
+
     try {
       const response = await fetch(`http://actuator:8084/door/state/`, {
         method: "PUT",
@@ -347,11 +348,9 @@ export function routes(app, wss, oidc, config) {
       resp.json({
         result: true,
       });
-      // for (let [sensor, ws ] of clients) {
-      //   if (sensor == "thermometer") {
-      //     ws.send(JSON.stringify({ type: "door", value: req.body }));
-      //   }
-      // }
+
+      door.state = req.body.state;     
+
       return result;
     } catch (error) {
       console.error("Error:", error);
@@ -372,6 +371,8 @@ export function routes(app, wss, oidc, config) {
       resp.json({
         result: true,
       });
+
+      heatpump._state = req.body.state; 
 
       return result;
     } catch (error) {
@@ -397,6 +398,8 @@ export function routes(app, wss, oidc, config) {
         result: true,
       });
 
+      heatpump._temperature = req.body.temperature;
+
       return result;
     } catch (error) {
       console.error("Error:", error);
@@ -419,6 +422,8 @@ export function routes(app, wss, oidc, config) {
       );
       const result = await response;
       resp.json(true);
+
+      windows[id - 1]._state = req.body.state;
 
       for (let [sensor, ws ] of clients) {
         if (sensor == "thermometer") {
@@ -448,7 +453,10 @@ export function routes(app, wss, oidc, config) {
         body: JSON.stringify(dto),
       });
       const result = await response.json();
+
       resp.json({result: result.result});
+
+      windows.push(new Window(result.result.id, result.result.state));
       return result;
     } catch (error) {
       console.error("Error:", error);
