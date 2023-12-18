@@ -19,8 +19,13 @@ Microservizi (Capitolo 3)
 Ogni microservizio è isolato in un container Docker per garantire un'implementazione modulare e scalabile.
 
 Attuatore (Porta 8084): Intermediario per le chiamate REST, gestisce le richieste dal backend e le inoltra al microservizio corretto.
+
 Pompa di Calore (Porta 8083): Mantiene lo stato e la temperatura della pompa di calore, ricevendo e inviando informazioni all'attuatore e al backend.
+
 Porta (Porta 8082): Mantiene lo stato della porta, riceve e invia informazioni all'attuatore e al backend.
+
 Finestre (Porta 8085): Mantiene lo stato e la lista delle finestre attive, ricevendo e inviando informazioni all'attuatore e al backend.
+
 Tempo Atmosferico (Porta 8081): Invia la temperatura simulata al backend.
+
 Termometro (Porta 8086): Mantiene aggiornata la temperatura della stanza, ricevendo e inviando informazioni tramite Web Socket.
