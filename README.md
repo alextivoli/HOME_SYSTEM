@@ -1,4 +1,4 @@
-#Home System - Progetto di Sistemi Orientati ad Internet
+<p style="font-size:18px;">Home System - Progetto di Sistemi Orientati ad Internet</p>
 
 Questa repository contiene il codice sorgente dell'applicazione Web sviluppata per il progetto di Sistemi Orientati ad Internet. L'applicazione simula la temperatura esterna e consente il controllo di vari sensori in una stanza di casa, tra cui una porta, una pompa di calore e finestre.
 
