@@ -1,4 +1,4 @@
-<p style="font-size:18px;">Home System - Progetto di Sistemi Orientati ad Internet</p>
+<p style="font-size:30px;">Home System - Progetto di Sistemi Orientati ad Internet</p>
 
 Questa repository contiene il codice sorgente dell'applicazione Web sviluppata per il progetto di Sistemi Orientati ad Internet. L'applicazione simula la temperatura esterna e consente il controllo di vari sensori in una stanza di casa, tra cui una porta, una pompa di calore e finestre.
 
@@ -8,15 +8,16 @@ L'applicazione è accessibile via HTTP all'indirizzo http://alex-tivoli.soi2223.
 
 Il codice sorgente dell'applicazione è disponibile nella repository GitHub: HOME_SYSTEM
 
-##FRONTEND
+
+<p style="font-size:25px;">FRONTEND</p>
 
 Il frontend richiede l'accesso tramite il login con credenziali Google. Offre un'interfaccia per controllare la temperatura della stanza, gestire la pompa di calore, le finestre e la porta. Il frontend è basato su container Docker e utilizza Web Socket per comunicare con il backend.
 
-##BACKEND 
+<p style="font-size:25px;">BACKEND</p>
 
 Il backend è connesso a tutti i servizi attivi, l'attuatore e il frontend. Opera all'interno di un container Docker, raccoglie informazioni dai sensori tramite Web Socket, invia dati al frontend e gestisce i comandi dell'utente, che vengono inoltrati all'attuatore tramite chiamate REST.
 
-##MICROSERVIZI
+<p style="font-size:25px;">MICROSERVIZI</p>
 
 Ogni microservizio è isolato in un container Docker per garantire un'implementazione modulare e scalabile.
 
